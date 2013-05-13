@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block tab2 %}active{% endblock %}
+
+{% block main %}
+<p>Groups for {{ user.username }}: </p>
+<ul>
+{% for group in users.groups.all %}
+    <li>" {{ group.name }} "</li>
+{% endfor %}
+</ul>
+
+<p>Resources: </p>
+<ul>
+{% for resource in resource_list %}
+    <li> {{ resource.filename }} </li>
+{% endfor %}
+</ul>
+{% endblock %}

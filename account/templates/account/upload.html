@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block tab1 %}active{% endblock %}
+
+{% block main %}
+<form name="input" action="{% url 'account:upload' %}" method="post">
+{% csrf_token %} 
+Choose a file: <input type="text" name="resource" placeholder="Filename.." autofocus>
+<input type="submit" value="Upload">
+</form>
+{% if created %}
+    <p>Successfully uploaded <i>{{ uploaded.filename }}</i></p>
+{% else %}
+    <p><i>{{ uploaded.filename }}</i> already exists in the database</p>
+{% endif %}
+<p> -------------------------- </p>
+{% for user in users %}
+    <p>Groups for {{ user.username }}: </p>
+    <ul>
+    {% for group in users.groups.all %}
+        <li>" {{ group.name }} "</li>
+    {% endfor %}
+    </ul>
+{% endfor %}
+
+<p>Resources: </p>
+<ul>
+{% for resource in resource_list %}
+    <li> {{ resource.filename }} -- Belongs to {{resource.key.username}}</li>
+{% endfor %}
+</ul>
+{% endblock %}

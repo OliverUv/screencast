@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <title>{% block title %}Screeno castu{% endblock %}</title>
+        <link rel="stylesheet" href="{{ STATIC_URL }}style.css">
+    </head>
+    <body>
+        <div id="navbar">
+        {% block header %}
+        {% load url from future %}
+        <ul>
+            <li class="{% block tab1 %}inactive{% endblock %}"><a href="{% url 'account:index' %}">Index</a></li>
+            <li class="{% block tab2 %}inactive{% endblock %}"><a href="{% url 'account:profile' %}">Profile</a></li>
+            <li class="{% block tab3 %}inactive{% endblock %}"><a href="{% url 'account:browse' %}">Browse</a></li>
+        </ul>
+        {% endblock %}
+        </div>
+        <div class="main">
+        {% block main %}Add content..{% endblock %}
+        </div>
+    </body>
+</html>

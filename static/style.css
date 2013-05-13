@@ -1,0 +1,26 @@
+#navbar ul { 
+    margin: 0; 
+    padding: 15px; /* Set margin and padding for cross browser consistency. */ 
+    list-style-type: none; 
+    text-align: left; 
+    background-color: #000; 
+}
+
+#navbar ul li { 
+    display: inline; /* Needed to create horizontal effect */ 
+}
+
+#navbar ul li a { 
+text-decoration: none; 
+padding: .2em 1em; /* Gives the link space inside it's individual block. */ 
+background-color: #000;
+} 
+
+.active a{
+    color: #fff;
+}
+
+.inactive a{
+    color: #f00;
+}
+
