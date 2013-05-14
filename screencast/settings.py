@@ -2,12 +2,12 @@
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
+ANONYMOUS_USER_ID = -1 #For django-guardian plugin
 
 DATABASES = {
     'default': {
@@ -106,6 +106,7 @@ MIDDLEWARE_CLASSES = (
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_cas.backends.CASBackend',
+    'guardian.backends.ObjectPermissionBackend',
 )
 
 CAS_SERVER_URL = 'https://login.liu.se/cas/login'
@@ -133,6 +134,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'guardian',
     'account',
 )
 

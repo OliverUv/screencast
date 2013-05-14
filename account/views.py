@@ -5,6 +5,7 @@ from django.http import Http404,HttpResponse, HttpResponseServerError, HttpRespo
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from models import Resource
+from guardian.shortcuts import get_objects_for_user, assign
 #from django.core.urlresolvers import reverse
 #from django.views.generic import DetailView, ListView
 #from django.core.context_processors import csrf
@@ -23,8 +24,7 @@ def index(request):
 
 @login_required
 def profile(request):
-    resources = Resource.objects.filter(key=request.user)
-    
+    resources = get_objects_for_user(request.user, 'account.view_resource')
     context = Context({
         'user': request.user,
         'resource_list': resources,
@@ -34,18 +34,19 @@ def profile(request):
 
 @login_required
 def browse(request):
-    users = User.objects.order_by('username')
     resources = Resource.objects.all()
-
     context = Context({
-        'users': users,
         'resource_list': resources,
         })
 
     return render(request, 'account/browse.html', context)
 
+@login_required
 def upload(request):
     resource, c = Resource.objects.get_or_create(key=request.user, filename=request.POST['resource'])
+    assign('modify_resource', request.user, resource)
+    assign('view_resource', request.user, resource)
+
     users = User.objects.order_by('username')
     resources = Resource.objects.all()
 
