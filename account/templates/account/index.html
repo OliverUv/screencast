@@ -12,8 +12,8 @@ Choose a file: <input type="text" name="resource" placeholder="Filename.." autof
 {% for user in users %}
     <p>Groups for {{ user.username }}: </p>
     <ul>
-    {% for group in users.groups.all %}
-        <li>" {{ group.name }} "</li>
+    {% for group in user.groups.all %}
+        <li>{{ group.name }}</li>
     {% endfor %}
     </ul>
 {% endfor %}

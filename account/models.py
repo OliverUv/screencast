@@ -1,6 +1,7 @@
 from django.db import models
 from django_cas.backends import CASBackend
 from django.contrib.auth.models import User 
+from django.utils import simplejson
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -29,3 +30,12 @@ class Resource(models.Model):
             ('modify_resource', 'Able to modify resource'),
             ('view_resource', 'Able to view resource'),
         )
+
+# JSON encoder
+class LazyEncoder(simplejson.JSONEncoder):
+    """Encodes django's lazy i18n strings.
+    """
+    def default(self, obj):
+        if isinstance(obj, Promise):
+            return force_unicode(obj)
+        return obj

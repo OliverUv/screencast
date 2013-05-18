@@ -1,14 +1,12 @@
-from django.conf.urls import patterns, url
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.template import Context, loader, RequestContext
 from django.http import Http404,HttpResponse, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from models import Resource
+from models import Resource, LazyEncoder
 from guardian.shortcuts import get_objects_for_user, assign
-#from django.core.urlresolvers import reverse
-#from django.views.generic import DetailView, ListView
-#from django.core.context_processors import csrf
+from django.utils import simplejson
 
 @login_required
 def index(request):
@@ -58,3 +56,26 @@ def upload(request):
         })
 
     return render(request, 'account/upload.html', context)
+
+@login_required
+def share(request):
+    #Handle submitted users to share to
+    #if request.method == 'POST':
+    return HttpResponseRedirect(reverse('account:profile'))
+
+@login_required
+def share_add_users(request):
+    if request.method == 'POST':
+        files = request.POST.getlist('files')
+        message = 'recieved files'
+    else:
+        message = 'Nuthin'
+
+   #Build response
+    if request.is_ajax():
+        result = simplejson.dumps({
+            'message': message,
+            'type': type
+        },cls=LazyEncoder)
+        return HttpResponse(result, mimetype='application/javascript')
+

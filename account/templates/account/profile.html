@@ -4,15 +4,25 @@
 {% block main %}
 <p>Groups for {{ user.username }}: </p>
 <ul>
-{% for group in users.groups.all %}
-    <li>" {{ group.name }} "</li>
+{% for group in user.groups.all %}
+    <li>{{ group.name }}</li>
 {% endfor %}
 </ul>
 
 <p>Resources: </p>
+<div class="sharelist">
+<form name="input" action="{% url 'account:share_add_users' %}" method="post">
 <ul>
 {% for resource in resource_list %}
-    <li> {{ resource.filename }} </li>
+    <li> 
+    {% csrf_token %} 
+    <input type="checkbox" name="files" > {{ resource.filename }}
+    </li>
 {% endfor %}
 </ul>
+<input type="submit" value="Share">
+<input type="submit" value="Add">
+</form>
+</div>
 {% endblock %}
+

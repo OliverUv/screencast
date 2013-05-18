@@ -24,3 +24,6 @@ background-color: #000;
     color: #f00;
 }
 
+.sharelist ul{
+    list-style-type: none;
+}
