@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block head %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/share.js"></script>
+{% endblock %}
+{% block tab4 %}active{% endblock %}
+
+{% block main %}
+<p>Resources for {{ thisuser }}:</p>
+<ul class="resourceShareList">
+    {% for resource in resource_list %}
+        <li class="resourceUnmarked">{{ resource.filename }}</li>
+    {% endfor %}
+</ul>
+<p>Share with users:</p>
+<ol id="userlist" class="cleanlist">
+    {% for user in users %}
+        <li class="user">{{ user.username }}</li>
+    {% endfor %}
+</ol>
+
+<ol id="sharelist" class="cleanlist">
+    <li class="user">test1</li>
+    <li class="user">b</li>
+</ol>
+{% endblock %}
+

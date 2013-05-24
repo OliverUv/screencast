@@ -58,6 +58,18 @@ def upload(request):
     return render(request, 'account/upload.html', context)
 
 @login_required
+def test(request):
+    resources = get_objects_for_user(request.user, 'account.view_resource')
+    users = User.objects.order_by('username')
+    context = Context({
+        'users': users,
+        'thisuser': request.user,
+        'resource_list': resources,
+        })
+
+    return render(request, 'account/test.html', context)
+
+@login_required
 def share(request):
     #Handle submitted users to share to
     #if request.method == 'POST':
@@ -67,15 +79,17 @@ def share(request):
 def share_add_users(request):
     if request.method == 'POST':
         files = request.POST.getlist('files')
-        message = 'recieved files'
+        message = 'Worked'
+        rtype = 'success'
     else:
-        message = 'Nuthin'
+        message = 'Something went wrong'
+        rtype = 'error'
 
    #Build response
-    if request.is_ajax():
-        result = simplejson.dumps({
-            'message': message,
-            'type': type
-        },cls=LazyEncoder)
-        return HttpResponse(result, mimetype='application/javascript')
+    result = simplejson.dumps({
+        'message': message,
+        'type': rtype
+    },cls=LazyEncoder)
+    return HttpResponse(result, mimetype='application/javascript')
+
 

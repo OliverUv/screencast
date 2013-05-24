@@ -3,7 +3,8 @@
     padding: 15px; /* Set margin and padding for cross browser consistency. */ 
     list-style-type: none; 
     text-align: left; 
-    background-color: #000; 
+    background-color: #0772A1; 
+    width: 30%;
 }
 
 #navbar ul li { 
@@ -13,17 +14,51 @@
 #navbar ul li a { 
 text-decoration: none; 
 padding: .2em 1em; /* Gives the link space inside it's individual block. */ 
-background-color: #000;
+background-color: #0772A1;
 } 
 
 .active a{
-    color: #fff;
+    color: #60B9CE;
 }
 
 .inactive a{
-    color: #f00;
+    color: #fff;
 }
 
 .sharelist ul{
     list-style-type: none;
+}
+
+.cleanlist{ 
+    margin: 0; 
+    padding: 1px;
+    list-style-type: none; 
+    text-align: left; 
+    float: left;
+    margin-right: 20px;
+    margin-left: 10px;
+    width: 100px;
+    cursor: pointer;
+}
+
+.resourceShareList{
+    margin: 0; 
+    padding: 1px;
+    list-style-type: none; 
+    margin-left: 10px;
+    width: 100px;
+    cursor: pointer;
+}
+
+.resourceUnmarked{
+    color: #000;
+    background-color: #fff;
+}
+
+.resourceMarked{
+}
+
+.resourceMarked:first-letter{
+    font-weight: bold;
+    color: #00CC00;
 }

@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block head %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/sharetest.js"></script>
+{% endblock %}
 {% block tab2 %}active{% endblock %}
 
 {% block main %}
@@ -11,7 +14,7 @@
 
 <p>Resources: </p>
 <div class="sharelist">
-<form name="input" action="{% url 'account:share_add_users' %}" method="post">
+<form name="input" action="{% url 'account:share_add_users' %}" id="form-share" method="post">
 <ul>
 {% for resource in resource_list %}
     <li> 
@@ -20,9 +23,12 @@
     </li>
 {% endfor %}
 </ul>
-<input type="submit" value="Share">
-<input type="submit" value="Add">
+<input type="submit" value="Add" class="form-submit-add">
 </form>
 </div>
+<div class="input-message"></div>
+<div class="loading"></div>
+<div class="success"></div>
+<div class="error"></div>
 {% endblock %}
 
