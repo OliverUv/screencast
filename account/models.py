@@ -23,7 +23,7 @@ class Resource(models.Model):
     filename = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return filename
+        return self.filename
 
     class Meta:
         permissions=(

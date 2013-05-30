@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from models import Resource, LazyEncoder
 from guardian.shortcuts import get_objects_for_user, assign
 from django.utils import simplejson
+import json
 
 @login_required
 def index(request):
@@ -32,7 +33,8 @@ def profile(request):
 
 @login_required
 def browse(request):
-    resources = Resource.objects.all()
+    #resources = Resource.objects.all()
+    resources = get_objects_for_user(User.objects.get(username='testpilot'), 'account.view_resource')
     context = Context({
         'resource_list': resources,
         })
@@ -71,9 +73,43 @@ def test(request):
 
 @login_required
 def share(request):
-    #Handle submitted users to share to
-    #if request.method == 'POST':
-    return HttpResponseRedirect(reverse('account:profile'))
+    if request.method == 'POST':
+        #Parse data
+        jsusernames = request.POST['sharedusers']
+        jsresourcenames = request.POST['resources']
+        usernames = json.loads(jsusernames)
+        resourcenames = json.loads(jsresourcenames)
+        message = '' 
+
+        #Get users
+        try:
+            users = User.objects.filter(username__in=usernames)
+        except ObjectDoesNotExist:
+            message = 'Users not found'
+
+        #Get resources
+        try:
+            resources = Resource.objects.filter(filename__in=resourcenames)
+        except ObjectDoesNotExist:
+            message = 'Resources not found'
+
+        #Assign access rights to users
+        for user in users:
+            for resource in resources:
+                assign('view_resource', user, resource)
+
+        if len(message) == 0:
+            message = 'Worked'
+        
+    else:
+        message = 'Something went wrong'
+
+    #Build response
+    result = simplejson.dumps({
+        'message': message,
+    },cls=LazyEncoder)
+  
+    return HttpResponse(message, mimetype='application/javascript')
 
 @login_required
 def share_add_users(request):
