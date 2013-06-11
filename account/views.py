@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,Group
 from django.template import Context, loader, RequestContext
 from django.http import Http404,HttpResponse, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import render
@@ -24,19 +24,27 @@ def index(request):
 @login_required
 def profile(request):
     resources = get_objects_for_user(request.user, 'account.view_resource')
+    users = User.objects.order_by('username')
+    groups = Group.objects.all()
     context = Context({
-        'user': request.user,
+        'users': users,
+        'thisuser': request.user,
         'resource_list': resources,
+        'groups': groups,
         })
 
     return render(request, 'account/profile.html', context)
 
 @login_required
 def browse(request):
-    #resources = Resource.objects.all()
-    resources = get_objects_for_user(User.objects.get(username='testpilot'), 'account.view_resource')
+    user = request.user
+    created = Resource.objects.filter(key=user)
+    #Get intersection from created and owned resources
+    resources = get_objects_for_user(User.objects.get(username=user.username), 'account.view_resource').exclude(key=user)
     context = Context({
-        'resource_list': resources,
+        'shared_resource': resources,
+        'created_resources':created,
+        'thisuser': user,
         })
 
     return render(request, 'account/browse.html', context)
@@ -63,10 +71,12 @@ def upload(request):
 def test(request):
     resources = get_objects_for_user(request.user, 'account.view_resource')
     users = User.objects.order_by('username')
+    groups = Group.objects.all()
     context = Context({
         'users': users,
         'thisuser': request.user,
         'resource_list': resources,
+        'groups': groups,
         })
 
     return render(request, 'account/test.html', context)
@@ -75,9 +85,11 @@ def test(request):
 def share(request):
     if request.method == 'POST':
         #Parse data
-        jsusernames = request.POST['sharedusers']
+        jsusernames = request.POST['users']
+        jsgroupnames = request.POST['groups']
         jsresourcenames = request.POST['resources']
         usernames = json.loads(jsusernames)
+        groupnames = json.loads(jsgroupnames)
         resourcenames = json.loads(jsresourcenames)
         message = '' 
 
@@ -93,10 +105,18 @@ def share(request):
         except ObjectDoesNotExist:
             message = 'Resources not found'
 
-        #Assign access rights to users
-        for user in users:
-            for resource in resources:
+        #Get groups 
+        try:
+            groups = Group.objects.filter(name__in=groupnames)
+        except ObjectDoesNotExist:
+            message = 'Groups not found'
+
+        #Assign access rights to users and groups
+        for resource in resources:
+            for user in users:
                 assign('view_resource', user, resource)
+            for group in groups:
+                assign('view_resource', group, resource)
 
         if len(message) == 0:
             message = 'Worked'

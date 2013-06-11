@@ -1,24 +1,27 @@
 $(document).ready(function(){
-    //Slick clickable userlist
-    $(".user").click(function(){
+    //Switch position from one list to the other sibling list
+    function switchList(){
         var element = $(this);
         var added = false;
         var targetList = $(this).parent().siblings(".cleanlist")[0];
         $(this).fadeOut("fast", function() {
-            $(".cleanlist", targetList).each(function(){
-                if ($(this).text() > $(element).text()) {
+            $(".user, .group", targetList).each(function(){
+                if ($(this).text().toLowerCase() > $(element).text().toLowerCase()) {
                     $(element).insertBefore($(this)).fadeIn("fast");
                     added = true;
                     return false;
                 }
             });
+
             if(!added) $(element).appendTo($(targetList)).fadeIn("fast");
         });
-    });
+    }
+    
+    $(".user").click(switchList);
+    $(".group").click(switchList);
 
     //Mark resources
     $(".resourceShareList").on("click", ".resourceMarked", function(event){
-        //$(this).text().replace(/[>]/, "");
         $(this).text($(this).text().substr(2));
         $(this).removeClass().addClass("resourceUnmarked").fadeIn("fast");
     });
@@ -41,8 +44,14 @@ $(document).ready(function(){
         for(var i=0, im=lis.length; im>i; i++)
             usr.push(lis[i].firstChild.nodeValue);
         
+        //Get all selected groups
+        var gr = [], lis = document.getElementById("sharelist").getElementsByClassName("group");
+        for(var i=0, im=lis.length; im>i; i++)
+            gr.push(lis[i].firstChild.nodeValue);
+
         var resources = JSON.stringify(rs);
         var users = JSON.stringify(usr);
+        var groups = JSON.stringify(gr);
         
         $.ajax({
             url: "share/", 
@@ -50,7 +59,8 @@ $(document).ready(function(){
             dataType: "html",
             data: {
                 'resources': resources,
-                'sharedusers': users,
+                'users': users,
+                'groups': groups,
                 },
                 success: function(html){
                     $('#result').html(html);

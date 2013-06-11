@@ -1,34 +1,31 @@
 {% extends "base.html" %}
 {% block head %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/sharetest.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/share.js"></script>
 {% endblock %}
 {% block tab2 %}active{% endblock %}
 
 {% block main %}
-<p>Groups for {{ user.username }}: </p>
-<ul>
-{% for group in user.groups.all %}
-    <li>{{ group.name }}</li>
-{% endfor %}
+<p>Resources for {{ thisuser }}:</p>
+<ul id="resourcelist" class="resourceShareList">
+    {% for resource in resource_list %}
+        <li class="resourceUnmarked">{{ resource.filename }}</li>
+    {% endfor %}
 </ul>
+<p>Users and groups:</p>
+<ol id="userlist" class="cleanlist">
+    {% for user in users %}
+        <li class="user">{{ user.username }}</li>
+    {% endfor %}
+    {% for group in groups %}
+        <li class="group">{{ group.name }}</li>
+    {% endfor %}
+</ol>
+<ol id="sharelist" class="cleanlist">
+    <li>Share with users:</li>
+</ol>
 
-<p>Resources: </p>
-<div class="sharelist">
-<form name="input" action="{% url 'account:share_add_users' %}" id="form-share" method="post">
-<ul>
-{% for resource in resource_list %}
-    <li> 
-    {% csrf_token %} 
-    <input type="checkbox" name="files" > {{ resource.filename }}
-    </li>
-{% endfor %}
-</ul>
-<input type="submit" value="Add" class="form-submit-add">
-</form>
-</div>
-<div class="input-message"></div>
-<div class="loading"></div>
-<div class="success"></div>
-<div class="error"></div>
+<p class="sharebutton">Share</p>
+<p><i id="result"></i></p>
+
 {% endblock %}
 
