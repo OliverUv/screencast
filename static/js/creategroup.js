@@ -1,4 +1,18 @@
 $(document).ready(function(){
+    $.fn.exists = function () {
+        return this.length !== 0;
+    }
+
+    $.fn.addRemoveViewButton = function (){
+        var viewButton = $(this.find(".viewbutton"));
+        if (viewButton.exists()){
+            viewButton.remove().fadeIn("fast");
+        }
+        else{
+            this.prepend("<div class='viewbutton'>[+]</div>").fadeIn("fast");
+        }
+    }
+
     //Switch position from one list to the other sibling list
     function switchList(){
         var element = $(this);
@@ -14,51 +28,69 @@ $(document).ready(function(){
             });
 
             if(!added) $(element).appendTo($(targetList)).fadeIn("fast");
+
+            //View group button remove/add
+            if (element.hasClass("group")){
+                element.addRemoveViewButton();
+            }
         });
     }
     
-    $(".user").click(switchList);
-    $(".group").click(switchList);
+    $(".user").not('.viewbutton').click(switchList);
+    $(".group").not('.viewbutton').click(switchList);
 
-    //Mark resources
-    $(".resourceShareList").on("click", ".resourceMarked", function(event){
-        $(this).text($(this).text().substr(2));
-        $(this).removeClass().addClass("resourceUnmarked").fadeIn("fast");
+    //View a group
+    $(".viewbutton").on("click", function(){
+        var selectedgroup = JSON.stringify($(this).parent().text().substr(3));
+        //Get group users and add them to an ul
+        $.ajax({
+            url: "get_group/",
+            type: "POST",
+            dataType: "json",
+            data:{
+                'group': selectedgroup, 
+            },
+            success: function(data){
+                //Add headline for list
+                $('#groupview p').text('Users in ' + selectedgroup +':');
+                //Clear list
+                var target = $('#groupview ul');
+                target.empty();
+                //Add users to div
+                var usrlist = data.users.split(' ');
+                $(usrlist).each(function() {
+                    $('<li>'+this+'</li>').appendTo(target);
+                });
+                
+                $('#result').html(data.users + ' Message:' + data.message);
+            },
+            error: function(xhr){ alert('Error: ' + xhr.status);}
+        });
     });
-
-    $(".resourceShareList").on("click", ".resourceUnmarked", function(event){
-        var clicked = $(event.target);
-        var oldtext = $(clicked).text();
-        $(clicked).text("> " +oldtext);
-        $(clicked).removeClass().addClass("resourceMarked").fadeIn("fast");
-    });
-
-    $("#sharebutton").on("click", function(){
-        //Get all marked resources
-        var rs = [], lis = document.getElementById("resourcelist").getElementsByClassName("resourceMarked");
-        for(var i=0, im=lis.length; im>i; i++)
-            rs.push(lis[i].firstChild.nodeValue.substr(2));
-
+    
+    //Create a group 
+    $("#groupbutton").on("click", function(){
         //Get all selected users
-        var usr = [], lis = document.getElementById("sharelist").getElementsByClassName("user");
+        var usr = [], lis = document.getElementById("grouplist").getElementsByClassName("user");
         for(var i=0, im=lis.length; im>i; i++)
             usr.push(lis[i].firstChild.nodeValue);
         
         //Get all selected groups
-        var gr = [], lis = document.getElementById("sharelist").getElementsByClassName("group");
+        var gr = [], lis = document.getElementById("grouplist").getElementsByClassName("group");
         for(var i=0, im=lis.length; im>i; i++)
             gr.push(lis[i].firstChild.nodeValue);
 
-        var resources = JSON.stringify(rs);
+        //Get group name
+        var groupname = JSON.stringify(document.getElementById("groupnameinput").value);
         var users = JSON.stringify(usr);
         var groups = JSON.stringify(gr);
         
         $.ajax({
-            url: "share/", 
+            url: "create_group/", 
             type: "POST",
             dataType: "html",
             data: {
-                'resources': resources,
+                'groupname': groupname,
                 'users': users,
                 'groups': groups,
                 },

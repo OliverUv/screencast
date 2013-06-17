@@ -50,6 +50,19 @@ def browse(request):
     return render(request, 'account/browse.html', context)
 
 @login_required
+def test(request):
+    users = User.objects.order_by('username')
+    groups = Group.objects.all()
+
+    context = Context({
+        'users': users,
+        'thisuser': request.user,
+        'groups': groups,
+        })
+
+    return render(request, 'account/test.html', context)
+
+@login_required
 def upload(request):
     resource, c = Resource.objects.get_or_create(key=request.user, filename=request.POST['resource'])
     assign('modify_resource', request.user, resource)
@@ -68,18 +81,75 @@ def upload(request):
     return render(request, 'account/upload.html', context)
 
 @login_required
-def test(request):
-    resources = get_objects_for_user(request.user, 'account.view_resource')
-    users = User.objects.order_by('username')
-    groups = Group.objects.all()
-    context = Context({
-        'users': users,
-        'thisuser': request.user,
-        'resource_list': resources,
-        'groups': groups,
-        })
+def create_group(request):
+    if request.method == 'POST':
+        #Parse data
+        jsgroupname = request.POST['groupname']
+        jsusernames = request.POST['users']
+        jsgroupnames = request.POST['groups']
+        usernames = json.loads(jsusernames)
+        groupnames = json.loads(jsgroupnames)
+        gName = json.loads(jsgroupname)
+        message = '' 
+        
+        #Create group
+        newGroup = Group(name=gName)
+        newGroup.save()
 
-    return render(request, 'account/test.html', context)
+        #Get users
+        try:
+            users = User.objects.filter(username__in=usernames)
+        except ObjectDoesNotExist:
+            message = 'Users not found'
+
+        try:
+            gUsers = User.objects.filter(groups__name__in=groupnames)
+        except ObjectDoesNotExist:
+            message = 'Groups not found'
+
+        #Merge querysets and add group
+        allusers = gUsers | users        
+        for user in allusers:
+            user.groups.add(newGroup)
+
+        if len(message) == 0:
+            message = 'Created..'
+
+         #PRINT USERS
+         #message = str(allusers.values_list('username'))
+    else:
+        message = 'Not a POST'
+
+    #Build response
+    result = simplejson.dumps({
+        'message': message,
+    },cls=LazyEncoder)
+  
+    return HttpResponse(message, mimetype='application/javascript')
+
+@login_required
+def get_group(request):
+    if request.method == "POST":
+        #Parse data
+        jsgroup = request.POST['group']
+        group = json.loads(jsgroup)
+        message = ''
+
+        #Get users
+        try:
+            gUsers = User.objects.filter(groups__name=group)
+        except ObjectDoesNotExist:
+            message = 'Groups not found'
+
+        if len(message) == 0:
+            message = 'Success'
+
+    else:
+        message = 'Not a POST'
+
+    users = " ".join(gUsers.values_list('username',flat=True).order_by('username')) 
+    result = json.dumps({"users": users, "message": message})
+    return HttpResponse(result, mimetype='application/javascript')
 
 @login_required
 def share(request):
@@ -119,7 +189,7 @@ def share(request):
                 assign('view_resource', group, resource)
 
         if len(message) == 0:
-            message = 'Worked'
+            message = 'Shared..'
         
     else:
         message = 'Something went wrong'

@@ -1,9 +1,32 @@
 {% extends "base.html" %}
 {% block head %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/creategroup.js"></script>
 {% endblock %}
 {% block tab4 %}active{% endblock %}
 
 {% block main %}
+<p> Select users and/or groups:</p>
+<ol id="userlist" class="cleanlist">
+    {% for user in users %}
+        <li class="user">{{ user.username }}</li>
+    {% endfor %}
+    {% for group in groups %}
+    <li class="group"><div class="viewbutton">[+]</div>{{ group.name }}</li>
+    {% endfor %}
+</ol>
 
+<div id="groupview">
+    <p></p>
+    <ul class="test">
+    </ul>
+</div>
+
+<ol id="grouplist" class="cleanlist">
+    <li>Included:</li>
+</ol>
+
+Name your group:<input type="text" id="groupnameinput" placeholder="Name.."><br>
+<p id="groupbutton" class="actionbutton">Create</p>
+<p><i id="result"></i></p>
 {% endblock %}
 

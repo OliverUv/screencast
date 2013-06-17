@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     url(r'^test/$', views.test, name='test'),
     url(r'^profile/share/$', views.share, name='share'),
     url(r'^share_add_users/$', views.share_add_users, name='share_add_users'),
-#    url(r'^(?P<user_id>\d+)/$', views.detail, name='detail'),
+    url(r'^test/create_group/$', views.create_group, name='create_group'),
+    url(r'^test/get_group/$', views.get_group, name='get_group'),
    )
