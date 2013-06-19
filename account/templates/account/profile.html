@@ -5,27 +5,27 @@
 {% block tab2 %}active{% endblock %}
 
 {% block main %}
-<p>Resources for {{ thisuser }}:</p>
-<ul id="resourcelist" class="resourceShareList">
-    {% for resource in resource_list %}
-        <li class="resourceUnmarked">{{ resource.filename }}</li>
-    {% endfor %}
-</ul>
-<p>Users and groups:</p>
-<ol id="userlist" class="cleanlist">
-    {% for user in users %}
-        <li class="user">{{ user.username }}</li>
-    {% endfor %}
-    {% for group in groups %}
-        <li class="group">{{ group.name }}</li>
-    {% endfor %}
-</ol>
-<ol id="sharelist" class="cleanlist">
-    <li>Share with users:</li>
-</ol>
-
+<div class='mainContainer'>
+    <p>Resources for {{ thisuser }}:</p>
+    <ul id="resourcelist" class="resourceShareList">
+        {% for resource in resource_list %}
+            <li class="resourceUnmarked">{{ resource.filename }}</li>
+        {% endfor %}
+    </ul>
+    <p>Users and groups:</p>
+    <ol id="userlistProfile" class="cleanlist">
+        {% for user in users %}
+            <li class="user">{{ user.username }}</li>
+        {% endfor %}
+        {% for group in groups %}
+            <li class="group">{{ group.name }}</li>
+        {% endfor %}
+    </ol>
+    <ol id="sharelist" class="cleanlist">
+        <li>Share with users:</li>
+    </ol>
+</div>
 <p id="sharebutton" class="actionbutton">Share</p>
 <p><i id="result"></i></p>
-
 {% endblock %}
 

@@ -5,28 +5,30 @@
 {% block tab4 %}active{% endblock %}
 
 {% block main %}
-<p> Select users and/or groups:</p>
-<ol id="userlist" class="cleanlist">
-    {% for user in users %}
-        <li class="user">{{ user.username }}</li>
-    {% endfor %}
-    {% for group in groups %}
-    <li class="group"><div class="viewbutton">[+]</div>{{ group.name }}</li>
-    {% endfor %}
-</ol>
+<div class='mainContainer'>
+    <p> Select users and/or groups:</p>
+    <ol id="userlist" class="cleanlist">
+        {% for user in users %}
+            <li class="user">{{ user.username }}</li>
+        {% endfor %}
+        {% for group in groups %}
+        <li class="group"><span class="viewbutton">[+]</span><span class="switchbutton">{{ group.name }}</span></li>
+        {% endfor %}
+    </ol>
 
-<div id="groupview">
-    <p></p>
-    <ul class="test">
-    </ul>
+    <div id="groupview">
+        <p></p>
+        <ul>
+        </ul>
+    </div>
+
+    <ol id="grouplist" class="cleanlist">
+        <li>Included:</li>
+    </ol>
+
+    Name your group:<input type="text" id="groupnameinput" placeholder="Name.."><br>
+    <p id="groupbutton" class="actionbutton">Create</p>
+    <p><i id="result"></i></p>
 </div>
-
-<ol id="grouplist" class="cleanlist">
-    <li>Included:</li>
-</ol>
-
-Name your group:<input type="text" id="groupnameinput" placeholder="Name.."><br>
-<p id="groupbutton" class="actionbutton">Create</p>
-<p><i id="result"></i></p>
 {% endblock %}
 

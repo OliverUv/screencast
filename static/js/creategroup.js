@@ -6,19 +6,18 @@ $(document).ready(function(){
     $.fn.addRemoveViewButton = function (){
         var viewButton = $(this.find(".viewbutton"));
         if (viewButton.exists()){
-            viewButton.remove().fadeIn("fast");
+            viewButton.remove();
         }
         else{
-            this.prepend("<div class='viewbutton'>[+]</div>").fadeIn("fast");
+            this.prepend("<span class='viewbutton'>[+]</span>");
         }
     }
 
-    //Switch position from one list to the other sibling list
-    function switchList(){
-        var element = $(this);
+    function switchListGroup(){
+        var element = $(this).parent();
         var added = false;
-        var targetList = $(this).parent().siblings(".cleanlist")[0];
-        $(this).fadeOut("fast", function() {
+        var targetList = $(element).parent().siblings(".cleanlist")[0];
+        $(element).fadeOut("fast", function() {
             $(".user, .group", targetList).each(function(){
                 if ($(this).text().toLowerCase() > $(element).text().toLowerCase()) {
                     $(element).insertBefore($(this)).fadeIn("fast");
@@ -35,12 +34,49 @@ $(document).ready(function(){
             }
         });
     }
+
+    //Switch position from one list to the other sibling list
+    function switchListUser(){
+        var element = $(this);
+        if (element.parent().parent().attr("id")=="groupview") {
+            var targetList = document.getElementById("grouplist");
+        }
+        else{
+            var targetList = $(element).parent().siblings(".cleanlist")[0];
+        }
+        var added = false;
+        $(this).fadeOut("fast", function() {
+            $(".user, .group", targetList).each(function() {
+                //Element already in list TODO: Kolla in problem med att fel personer hamnar i gruppen (vissa kanske bara har display:none;?)
+                if($(this).text() == $(element).text()) {
+                    $(this).css('display','list-item');
+                    added = true;
+                    return false;
+                }
+
+                if ($(this).text().toLowerCase() > $(element).text().toLowerCase()) {
+                    $(element).insertBefore($(this)).fadeIn("fast");
+                    added = true;
+                    return false;
+                }
+            });
+
+            if(!added) $(element).appendTo($(targetList)).fadeIn("fast");
+
+            //View group button remove/add
+            if (element.hasClass("group")){
+                element.addRemoveViewButton();
+            }
+        });
+    }
     
-    $(".user").not('.viewbutton').click(switchList);
-    $(".group").not('.viewbutton').click(switchList);
+    $(".user").click(switchListUser);
+    $(".switchbutton").click(switchListGroup);
+    $("#groupview").on("click", ".user", switchListUser);
+    $("#grouplist").on("click", ".user", switchListUser);
 
     //View a group
-    $(".viewbutton").on("click", function(){
+    $("#userlist").on("click",".viewbutton", function(){
         var selectedgroup = JSON.stringify($(this).parent().text().substr(3));
         //Get group users and add them to an ul
         $.ajax({
@@ -59,15 +95,15 @@ $(document).ready(function(){
                 //Add users to div
                 var usrlist = data.users.split(' ');
                 $(usrlist).each(function() {
-                    $('<li>'+this+'</li>').appendTo(target);
+                    $('<li class="user">'+this+'</li>').appendTo(target);
                 });
                 
-                $('#result').html(data.users + ' Message:' + data.message);
+                //$('#result').html(data.users + ' Message:' + data.message);
             },
             error: function(xhr){ alert('Error: ' + xhr.status);}
         });
     });
-    
+
     //Create a group 
     $("#groupbutton").on("click", function(){
         //Get all selected users
