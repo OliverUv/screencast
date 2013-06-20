@@ -47,9 +47,8 @@ $(document).ready(function(){
         var added = false;
         $(this).fadeOut("fast", function() {
             $(".user, .group", targetList).each(function() {
-                //Element already in list TODO: Kolla in problem med att fel personer hamnar i gruppen (vissa kanske bara har display:none;?)
                 if($(this).text() == $(element).text()) {
-                    $(this).css('display','list-item');
+                    element.remove();
                     added = true;
                     return false;
                 }
@@ -70,10 +69,10 @@ $(document).ready(function(){
         });
     }
     
-    $(".user").click(switchListUser);
     $(".switchbutton").click(switchListGroup);
     $("#groupview").on("click", ".user", switchListUser);
     $("#grouplist").on("click", ".user", switchListUser);
+    $("#userlist").on("click", ".user", switchListUser);
 
     //View a group
     $("#userlist").on("click",".viewbutton", function(){
