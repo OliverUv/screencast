@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'^share_add_users/$', views.share_add_users, name='share_add_users'),
     url(r'^test/create_group/$', views.create_group, name='create_group'),
     url(r'^test/get_group/$', views.get_group, name='get_group'),
+    url(r'^launch_applet/$', views.launch_applet, name='launch_applet'),
    )

@@ -219,3 +219,10 @@ def share_add_users(request):
     return HttpResponse(result, mimetype='application/javascript')
 
 
+@login_required
+def launch_applet(request):
+    context = Context({
+        'user': request.user,
+        })
+
+    return render(request, 'account/applet.html', context)
