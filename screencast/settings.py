@@ -7,7 +7,7 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-ANONYMOUS_USER_ID = -1 #For django-guardian plugin
+ANONYMOUS_USER_ID = -1  # For django-guardian plugin
 
 DATABASES = None  # Set this in local_settings.py
 
@@ -65,7 +65,7 @@ STATICFILES_DIRS = None  # Set this in local_settings.py
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -75,7 +75,7 @@ SECRET_KEY = 'pq@81sak$90cff)^-y1602imd-4@0u7pb@^+yejp3zj^%%%y%o'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
