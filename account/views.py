@@ -54,7 +54,7 @@ def browse(request):
 
 
 @login_required
-def test(request):
+def groups(request):
     users = User.objects.order_by('username')
     groups = Group.objects.all()
 
@@ -64,7 +64,7 @@ def test(request):
         'groups': groups,
     })
 
-    return render(request, 'account/test.html', context)
+    return render(request, 'account/groups.html', context)
 
 
 @login_required
