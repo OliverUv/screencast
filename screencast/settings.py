@@ -9,17 +9,7 @@ ADMINS = (
 MANAGERS = ADMINS
 ANONYMOUS_USER_ID = -1 #For django-guardian plugin
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/home/albin/Dropbox/ida/env/screencast/sq3.db',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
-    }
-}
+DATABASES = None  # Set this in local_settings.py
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -68,12 +58,7 @@ STATIC_ROOT = ''
 STATIC_URL = '/static/'
 
 # Additional locations of static files
-STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    '/home/albin/Dropbox/ida/env/screencast/static',
-)
+STATICFILES_DIRS = None  # Set this in local_settings.py
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -116,12 +101,7 @@ ROOT_URLCONF = 'screencast.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'screencast.wsgi.application'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    '/home/albin/Dropbox/ida/env/screencast/templates',
-)
+TEMPLATE_DIRS = None  # Set this in local_settings.py
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -166,3 +146,9 @@ LOGGING = {
         },
     }
 }
+
+# Load host-specific settings.
+try:
+    from screencast.local_settings import *
+except ImportError:
+    pass

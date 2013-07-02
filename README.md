@@ -4,7 +4,7 @@ screencast
 Installation instructions
 -------------------------
 
-### Configure in settings.py
+### Configure in `screencast/local_settings.py`
 
  -  Database info
  -  Template dirs
