@@ -1,13 +1,14 @@
-from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User,Group
-from django.template import Context, loader, RequestContext
-from django.http import Http404,HttpResponse, HttpResponseServerError, HttpResponseRedirect
+from django.contrib.auth.models import User, Group
+from django.core.exceptions import ObjectDoesNotExist
+from django.template import Context, RequestContext
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from models import Resource, LazyEncoder
 from guardian.shortcuts import get_objects_for_user, assign
 from django.utils import simplejson
 import json
+
 
 @login_required
 def index(request):
@@ -17,9 +18,10 @@ def index(request):
     context = Context({
         'users': users,
         'resource_list': resources,
-        })
+    })
 
     return render(request, 'account/index.html', context)
+
 
 @login_required
 def profile(request):
@@ -31,26 +33,28 @@ def profile(request):
         'thisuser': request.user,
         'resource_list': resources,
         'groups': groups,
-        })
+    })
 
     return render(request, 'account/profile.html', context)
+
 
 @login_required
 def browse(request):
     user = request.user
     created = Resource.objects.filter(key=user)
-    #Get intersection from created and owned resources
+    # Get intersection from created and owned resources
     resources = get_objects_for_user(User.objects.get(username=user.username), 'account.view_resource').exclude(key=user)
     context = Context({
         'shared_resource': resources,
-        'created_resources':created,
+        'created_resources': created,
         'thisuser': user,
-        })
+    })
 
     return render(request, 'account/browse.html', context)
 
+
 @login_required
-def test(request):
+def groups(request):
     users = User.objects.order_by('username')
     groups = Group.objects.all()
 
@@ -58,9 +62,10 @@ def test(request):
         'users': users,
         'thisuser': request.user,
         'groups': groups,
-        })
+    })
 
-    return render(request, 'account/test.html', context)
+    return render(request, 'account/groups.html', context)
+
 
 @login_required
 def upload(request):
@@ -76,9 +81,10 @@ def upload(request):
         'resource_list': resources,
         'uploaded': resource,
         'created': c,
-        })
+    })
 
     return render(request, 'account/upload.html', context)
+
 
 @login_required
 def create_group(request):
@@ -90,8 +96,8 @@ def create_group(request):
         usernames = json.loads(jsusernames)
         groupnames = json.loads(jsgroupnames)
         gName = json.loads(jsgroupname)
-        message = '' 
-        
+        message = ''
+
         #Create group
         newGroup = Group(name=gName)
         newGroup.save()
@@ -108,7 +114,7 @@ def create_group(request):
             message = 'Groups not found'
 
         #Merge querysets and add group
-        allusers = gUsers | users        
+        allusers = gUsers | users
         for user in allusers:
             user.groups.add(newGroup)
 
@@ -120,12 +126,8 @@ def create_group(request):
     else:
         message = 'Not a POST'
 
-    #Build response
-    result = simplejson.dumps({
-        'message': message,
-    },cls=LazyEncoder)
-  
     return HttpResponse(message, mimetype='application/javascript')
+
 
 @login_required
 def get_group(request):
@@ -147,9 +149,10 @@ def get_group(request):
     else:
         message = 'Not a POST'
 
-    users = " ".join(gUsers.values_list('username',flat=True).order_by('username')) 
+    users = " ".join(gUsers.values_list('username', flat=True).order_by('username'))
     result = json.dumps({"users": users, "message": message})
     return HttpResponse(result, mimetype='application/javascript')
+
 
 @login_required
 def share(request):
@@ -161,25 +164,19 @@ def share(request):
         usernames = json.loads(jsusernames)
         groupnames = json.loads(jsgroupnames)
         resourcenames = json.loads(jsresourcenames)
-        message = '' 
+        message = ''
 
-        #Get users
+        #Get users, resources, groups
         try:
-            users = User.objects.filter(username__in=usernames)
-        except ObjectDoesNotExist:
             message = 'Users not found'
-
-        #Get resources
-        try:
-            resources = Resource.objects.filter(filename__in=resourcenames)
-        except ObjectDoesNotExist:
+            users = User.objects.filter(username__in=usernames)
             message = 'Resources not found'
-
-        #Get groups 
-        try:
-            groups = Group.objects.filter(name__in=groupnames)
-        except ObjectDoesNotExist:
+            resources = Resource.objects.filter(filename__in=resourcenames)
             message = 'Groups not found'
+            groups = Group.objects.filter(name__in=groupnames)
+            message = ''
+        except ObjectDoesNotExist:
+            return HttpResponse(message, mimetype='application/javascript')
 
         #Assign access rights to users and groups
         for resource in resources:
@@ -188,21 +185,16 @@ def share(request):
             for group in groups:
                 assign('view_resource', group, resource)
 
-        if len(message) == 0:
-            message = 'Shared..'
-        
+        message = 'Shared..'
+
     else:
         message = 'Something went wrong'
 
-    #Build response
-    result = simplejson.dumps({
-        'message': message,
-    },cls=LazyEncoder)
-  
     return HttpResponse(message, mimetype='application/javascript')
 
+
 @login_required
-def share_add_users(request):
+def share_add_users(request):  # TODO Seems unused?
     if request.method == 'POST':
         files = request.POST.getlist('files')
         message = 'Worked'
@@ -215,7 +207,7 @@ def share_add_users(request):
     result = simplejson.dumps({
         'message': message,
         'type': rtype
-    },cls=LazyEncoder)
+    }, cls=LazyEncoder)
     return HttpResponse(result, mimetype='application/javascript')
 
 
@@ -223,6 +215,6 @@ def share_add_users(request):
 def launch_applet(request):
     context = Context({
         'user': request.user,
-        })
+    })
 
     return render(request, 'account/applet.html', context)
