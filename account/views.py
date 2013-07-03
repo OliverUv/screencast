@@ -204,10 +204,10 @@ def share_add_users(request):  # TODO Seems unused?
         rtype = 'error'
 
    #Build response
-    result = simplejson.dumps({
+    result = json.dumps({
         'message': message,
         'type': rtype
-    }, cls=LazyEncoder)
+    })
     return HttpResponse(result, mimetype='application/javascript')
 
 
