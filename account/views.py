@@ -4,9 +4,9 @@ from django.template import Context, RequestContext
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from models import Resource, LazyEncoder
+from models import Resource
 from guardian.shortcuts import get_objects_for_user, assign
-from django.utils import simplejson
+from account.common import http_badrequest, http_success
 import json
 
 
@@ -88,45 +88,33 @@ def upload(request):
 
 @login_required
 def create_group(request):
-    if request.method == 'POST':
-        #Parse data
-        jsgroupname = request.POST['groupname']
-        jsusernames = request.POST['users']
-        jsgroupnames = request.POST['groups']
-        usernames = json.loads(jsusernames)
-        groupnames = json.loads(jsgroupnames)
-        gName = json.loads(jsgroupname)
-        message = ''
+    if request.method != 'POST':
+        return http_badrequest('Request was not POST.')
 
-        #Create group
-        newGroup = Group(name=gName)
-        newGroup.save()
+    try:
+        users = request.POST.getlist('users', None)
+        group_name = request.POST.get('groupname', None)
+    except ValueError:
+        return http_badrequest('Could not parse response.')
 
-        #Get users
-        try:
-            users = User.objects.filter(username__in=usernames)
-        except ObjectDoesNotExist:
-            message = 'Users not found'
+    if users is None or group_name is None:
+        return http_badrequest('Users and group name must be specified.')
 
-        try:
-            gUsers = User.objects.filter(groups__name__in=groupnames)
-        except ObjectDoesNotExist:
-            message = 'Groups not found'
+    if not group_name:
+        return http_badrequest('New group must have a name.')
 
-        #Merge querysets and add group
-        allusers = gUsers | users
-        for user in allusers:
-            user.groups.add(newGroup)
+    try:
+        users = User.objects.filter(username__in=users)
+    except ObjectDoesNotExist:
+        return http_badrequest('No such users exist.')
 
-        if len(message) == 0:
-            message = 'Created..'
+    newGroup = Group(name=group_name)
+    newGroup.save()
 
-         #PRINT USERS
-         #message = str(allusers.values_list('username'))
-    else:
-        message = 'Not a POST'
+    for user in users:
+        user.groups.add(newGroup)
 
-    return HttpResponse(message, mimetype='application/javascript')
+    return http_success()
 
 
 @login_required
@@ -151,7 +139,7 @@ def get_group(request):
 
     users = " ".join(gUsers.values_list('username', flat=True).order_by('username'))
     result = json.dumps({"users": users, "message": message})
-    return HttpResponse(result, mimetype='application/javascript')
+    return HttpResponse(result, mimetype='text/json')
 
 
 @login_required

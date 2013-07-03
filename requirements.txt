@@ -3,3 +3,4 @@ argparse==1.2.1
 django-cas==2.0.3
 django-guardian==1.1.0.beta
 wsgiref==0.1.2
+pytz=2013b
