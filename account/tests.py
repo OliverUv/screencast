@@ -50,14 +50,11 @@ def create_user():
 
 
 def add_test_data():
-    user0 = create_user()  # Logged in user
-    user1 = create_user()
+    users = [create_user() for _ in range(20)]
 
-    test_data = {
-        'users': [user0, user1]
+    return {
+        'users': users
     }
-
-    return test_data
 
 
 class HandyTestCase(TestCase):
@@ -98,7 +95,19 @@ class GeneralTests(HandyTestCase):
         self.assert_exists(Group.objects.filter(name=group_name))
         self.assert_exists(User.objects.filter(username=user_name, groups__name=group_name))
 
-    # TODO write test for adding several users, seems dysfunctional atm
+    @diff_count(Group, 1)
+    def test_new_group_multiple_users(self):
+        group_name = 'newgrouponeusertestgn'
+        user_names = [u.username for u in self.test_data['users']][1:]  # Add all users but the first
+
+        response = self.client.post('/account/groups/create_group/', {
+            'groupname': group_name,
+            'users': user_names
+        })
+        self.assert_http_success(response)
+        self.assert_exists(Group.objects.filter(name=group_name))
+        for user_name in user_names:
+            self.assert_exists(User.objects.filter(username=user_name, groups__name=group_name))
 
     @preserve_count(Group)
     def test_create_group_fail_no_group_name(self):
