@@ -61,7 +61,7 @@ function getCookie(name) {
 }
 
 function getCsrfCookie() {
-  return getCookie('frryd_csrf_cookie');
+  return getCookie('csrftoken');
 }
 
 function csrfSafeMethod(method) {
