@@ -8,6 +8,7 @@ from models import Resource
 from guardian.shortcuts import get_objects_for_user, assign
 from account.common import http_badrequest, http_success
 import json
+import models
 
 
 @login_required
@@ -109,11 +110,10 @@ def create_group(request):
     except ObjectDoesNotExist:
         return http_badrequest('No such users exist.')
 
-    newGroup = Group(name=group_name)
-    newGroup.save()
+    new_group = models.create_group(group_name, request.user)
 
     for user in users:
-        user.groups.add(newGroup)
+        user.groups.add(new_group)
 
     return http_success()
 
