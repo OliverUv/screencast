@@ -86,6 +86,7 @@ def upload(request):
     return render(request, 'account/upload.html', context)
 
 
+@ensure_post
 @login_required
 def create_group(request):
     if request.method != 'POST':

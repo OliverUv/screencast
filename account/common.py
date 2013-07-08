@@ -1,6 +1,7 @@
 from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponse
 from pytz import timezone
 from datetime import datetime
+from functools import wraps
 
 import calendar
 import django.utils
@@ -27,6 +28,17 @@ def http_json_response(json_response):
 
 def http_success():
     return HttpResponse(json.dumps({'status:': 'success'}), mimetype='application/json')
+
+
+def ensure_post(f):
+    '''Decorator used to ensure that a view is called by POST.'''
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        request = args[0]
+        if request.method != 'POST':
+            return http_badrequest('Request was not POST.')
+        return f(*args, **kwargs)
+    return wrapper
 
 
 def to_timestamp(datetime):

@@ -65,12 +65,12 @@ class HandyTestCase(TestCase):
     def assert_exists(self, query):
         self.assertTrue(query.exists())
 
-    def assert_http_bad_request(self, response, message=None):
+    def assert_http_bad_request(self, response, substring=None):
         self.assertEqual(response.status_code, 400)
         res_content = json.loads(response.content)
         self.assertEqual(res_content['status'], 'failed')
-        if message:
-            self.assertEqual(res_content['message'], message)
+        if substring:
+            self.assertTrue(substring in res_content['message'])
 
 
 class GeneralTests(HandyTestCase):
@@ -118,3 +118,13 @@ class GeneralTests(HandyTestCase):
             'users': [user_name]
         })
         self.assert_http_bad_request(response)
+
+    @preserve_count(Group)
+    def test_create_group_fail_not_post(self):
+        user_name = self.test_data['users'][1].username
+
+        response = self.client.get('/account/groups/create_group/', {
+            'groupname': 'dingdings',
+            'users': [user_name]
+        })
+        self.assert_http_bad_request(response, 'POST')
