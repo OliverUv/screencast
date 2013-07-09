@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from models import Resource
 from guardian.shortcuts import get_objects_for_user, assign
-from account.common import http_badrequest, http_success, ensure_post
+from account.common import http_badrequest, http_success, ensure_post, http_json_response
 import json
 import models
 
@@ -52,6 +52,18 @@ def browse(request):
     })
 
     return render(request, 'account/browse.html', context)
+
+
+@login_required
+def complete_usernames(request, partial_username):
+    if (len(partial_username) < 2):
+        return http_json_response([])  # Don't return anything for < 2 chars
+
+    max_results = 20
+    matching_names = User.objects.filter(username__icontains=partial_username)
+    matching_names = matching_names.order_by('username').values_list('username', flat=True)
+    matching_names = matching_names[:max_results]  # limit number of results
+    return http_json_response(list(matching_names))
 
 
 @login_required
@@ -132,7 +144,6 @@ def get_group(request):
 
     if len(message) == 0:
         message = 'Success'
-
 
     users = " ".join(gUsers.values_list('username', flat=True).order_by('username'))
     result = json.dumps({"users": users, "message": message})
