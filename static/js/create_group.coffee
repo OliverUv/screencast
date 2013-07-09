@@ -1,7 +1,4 @@
 $ ->
-  $.fn.exists = ->
-    this.length != 0
-
   dom_complete_box = $("#username_input")
   dom_selected_list = $('#selected_users')
   selected_users = []
@@ -14,7 +11,12 @@ $ ->
   update_user_selection = () ->
     dom_selected_list.empty()
     for username in selected_users
-      dom_selected_list.append($("<li>#{username}</li>"))
+      dom_selected_list.append($("<li class='added_user'>#{username}</li>"))
+
+  create_suggestion_box = (username) ->
+    box_class = "non_added_user"
+    box_class = "added_user" if username in selected_users
+    return $("<li class='#{box_class}'><a>#{username}</a></li>")
 
 
   cache = {}
@@ -38,6 +40,12 @@ $ ->
     select: (event, ui) ->
       if ui.item?
         add_to_selected_users(ui.item.value)
+        event.preventDefault()
       else
         alert "Nothing selected, input was #{this.value}"
+        event.preventDefault()
   })
+
+  # Manual styling for autocomplete items
+  dom_complete_box.data("ui-autocomplete")._renderItem = (ul, item) ->
+    create_suggestion_box(item.value).appendTo(ul)

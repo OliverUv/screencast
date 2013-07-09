@@ -3,10 +3,7 @@
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   $(function() {
-    var add_to_selected_users, cache, dom_complete_box, dom_selected_list, selected_users, update_user_selection;
-    $.fn.exists = function() {
-      return this.length !== 0;
-    };
+    var add_to_selected_users, cache, create_suggestion_box, dom_complete_box, dom_selected_list, selected_users, update_user_selection;
     dom_complete_box = $("#username_input");
     dom_selected_list = $('#selected_users');
     selected_users = [];
@@ -23,9 +20,17 @@
       _results = [];
       for (_i = 0, _len = selected_users.length; _i < _len; _i++) {
         username = selected_users[_i];
-        _results.push(dom_selected_list.append($("<li>" + username + "</li>")));
+        _results.push(dom_selected_list.append($("<li class='added_user'>" + username + "</li>")));
       }
       return _results;
+    };
+    create_suggestion_box = function(username) {
+      var box_class;
+      box_class = "non_added_user";
+      if (__indexOf.call(selected_users, username) >= 0) {
+        box_class = "added_user";
+      }
+      return $("<li class='" + box_class + "'><a>" + username + "</a></li>");
     };
     cache = {};
     dom_complete_box.bind("keydown", function(event) {
@@ -34,7 +39,7 @@
         return event.preventDefault();
       }
     });
-    return dom_complete_box.autocomplete({
+    dom_complete_box.autocomplete({
       source: function(request, response) {
         var partial_username;
         partial_username = request.term;
@@ -49,12 +54,17 @@
       minLength: 2,
       select: function(event, ui) {
         if (ui.item != null) {
-          return add_to_selected_users(ui.item.value);
+          add_to_selected_users(ui.item.value);
+          return event.preventDefault();
         } else {
-          return alert("Nothing selected, input was " + this.value);
+          alert("Nothing selected, input was " + this.value);
+          return event.preventDefault();
         }
       }
     });
+    return dom_complete_box.data("ui-autocomplete")._renderItem = function(ul, item) {
+      return create_suggestion_box(item.value).appendTo(ul);
+    };
   });
 
 }).call(this);

@@ -203,3 +203,10 @@ button:hover {
     margin-left: 200px;
 }
 
+.non_added_user {
+    padding: 2px;
+}
+.added_user {
+    padding: 2px;
+    background-color: #39F;
+}
