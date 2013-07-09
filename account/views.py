@@ -4,10 +4,11 @@ from django.template import Context, RequestContext
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from models import Resource, LazyEncoder
+from models import Resource
 from guardian.shortcuts import get_objects_for_user, assign
-from django.utils import simplejson
+from account.common import http_badrequest, http_success, ensure_post
 import json
+import models
 
 
 @login_required
@@ -86,109 +87,90 @@ def upload(request):
     return render(request, 'account/upload.html', context)
 
 
+@ensure_post
 @login_required
 def create_group(request):
-    if request.method == 'POST':
-        #Parse data
-        jsgroupname = request.POST['groupname']
-        jsusernames = request.POST['users']
-        jsgroupnames = request.POST['groups']
-        usernames = json.loads(jsusernames)
-        groupnames = json.loads(jsgroupnames)
-        gName = json.loads(jsgroupname)
-        message = ''
+    try:
+        users = request.POST.getlist('users', None)
+        group_name = request.POST.get('groupname', None)
+    except ValueError:
+        return http_badrequest('Could not parse response.')
 
-        #Create group
-        newGroup = Group(name=gName)
-        newGroup.save()
+    if users is None or group_name is None:
+        return http_badrequest('Users and group name must be specified.')
 
-        #Get users
-        try:
-            users = User.objects.filter(username__in=usernames)
-        except ObjectDoesNotExist:
-            message = 'Users not found'
+    if not group_name:
+        return http_badrequest('New group must have a name.')
 
-        try:
-            gUsers = User.objects.filter(groups__name__in=groupnames)
-        except ObjectDoesNotExist:
-            message = 'Groups not found'
+    try:
+        users = User.objects.filter(username__in=users)
+    except ObjectDoesNotExist:
+        return http_badrequest('No such users exist.')
 
-        #Merge querysets and add group
-        allusers = gUsers | users
-        for user in allusers:
-            user.groups.add(newGroup)
+    new_group = models.create_group(group_name, request.user)
 
-        if len(message) == 0:
-            message = 'Created..'
+    for user in users:
+        user.groups.add(new_group)
 
-         #PRINT USERS
-         #message = str(allusers.values_list('username'))
-    else:
-        message = 'Not a POST'
-
-    return HttpResponse(message, mimetype='application/javascript')
+    return http_success()
 
 
+@ensure_post
 @login_required
 def get_group(request):
-    if request.method == "POST":
-        #Parse data
-        jsgroup = request.POST['group']
-        group = json.loads(jsgroup)
-        message = ''
+    # TODO this should be a GET request, since it doesn't modify data.
+    #Parse data
+    jsgroup = request.POST['group']
+    group = json.loads(jsgroup)
+    message = ''
 
-        #Get users
-        try:
-            gUsers = User.objects.filter(groups__name=group)
-        except ObjectDoesNotExist:
-            message = 'Groups not found'
+    #Get users
+    try:
+        gUsers = User.objects.filter(groups__name=group)
+    except ObjectDoesNotExist:
+        message = 'Groups not found'
 
-        if len(message) == 0:
-            message = 'Success'
+    if len(message) == 0:
+        message = 'Success'
 
-    else:
-        message = 'Not a POST'
 
     users = " ".join(gUsers.values_list('username', flat=True).order_by('username'))
     result = json.dumps({"users": users, "message": message})
-    return HttpResponse(result, mimetype='application/javascript')
+    return HttpResponse(result, mimetype='text/json')
 
 
+@ensure_post
 @login_required
 def share(request):
-    if request.method == 'POST':
-        #Parse data
-        jsusernames = request.POST['users']
-        jsgroupnames = request.POST['groups']
-        jsresourcenames = request.POST['resources']
-        usernames = json.loads(jsusernames)
-        groupnames = json.loads(jsgroupnames)
-        resourcenames = json.loads(jsresourcenames)
+    #Parse data
+    jsusernames = request.POST['users']
+    jsgroupnames = request.POST['groups']
+    jsresourcenames = request.POST['resources']
+    usernames = json.loads(jsusernames)
+    groupnames = json.loads(jsgroupnames)
+    resourcenames = json.loads(jsresourcenames)
+    message = ''
+
+    #Get users, resources, groups
+    try:
+        message = 'Users not found'
+        users = User.objects.filter(username__in=usernames)
+        message = 'Resources not found'
+        resources = Resource.objects.filter(filename__in=resourcenames)
+        message = 'Groups not found'
+        groups = Group.objects.filter(name__in=groupnames)
         message = ''
+    except ObjectDoesNotExist:
+        return HttpResponse(message, mimetype='application/javascript')
 
-        #Get users, resources, groups
-        try:
-            message = 'Users not found'
-            users = User.objects.filter(username__in=usernames)
-            message = 'Resources not found'
-            resources = Resource.objects.filter(filename__in=resourcenames)
-            message = 'Groups not found'
-            groups = Group.objects.filter(name__in=groupnames)
-            message = ''
-        except ObjectDoesNotExist:
-            return HttpResponse(message, mimetype='application/javascript')
+    #Assign access rights to users and groups
+    for resource in resources:
+        for user in users:
+            assign('view_resource', user, resource)
+        for group in groups:
+            assign('view_resource', group, resource)
 
-        #Assign access rights to users and groups
-        for resource in resources:
-            for user in users:
-                assign('view_resource', user, resource)
-            for group in groups:
-                assign('view_resource', group, resource)
-
-        message = 'Shared..'
-
-    else:
-        message = 'Something went wrong'
+    message = 'Shared..'
 
     return HttpResponse(message, mimetype='application/javascript')
 
@@ -204,10 +186,10 @@ def share_add_users(request):  # TODO Seems unused?
         rtype = 'error'
 
    #Build response
-    result = simplejson.dumps({
+    result = json.dumps({
         'message': message,
         'type': rtype
-    }, cls=LazyEncoder)
+    })
     return HttpResponse(result, mimetype='application/javascript')
 
 

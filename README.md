@@ -4,6 +4,12 @@ screencast
 Installation instructions
 -------------------------
 
+### Prerequisites
+
+It is recommended that you use a virtualenv when installing the prerequisites. All
+prerequisites can be found in requirements.txt, you can install them easily by running
+`pip install -r requirements.txt`
+
 ### Configure in `screencast/local_settings.py`
 
  -  Database info
