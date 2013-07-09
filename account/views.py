@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from models import Resource
 from guardian.shortcuts import get_objects_for_user, assign
-from account.common import http_badrequest, http_success
+from account.common import http_badrequest, http_success, ensure_post
 import json
 import models
 
@@ -90,9 +90,6 @@ def upload(request):
 @ensure_post
 @login_required
 def create_group(request):
-    if request.method != 'POST':
-        return http_badrequest('Request was not POST.')
-
     try:
         users = request.POST.getlist('users', None)
         group_name = request.POST.get('groupname', None)
@@ -118,66 +115,62 @@ def create_group(request):
     return http_success()
 
 
+@ensure_post
 @login_required
 def get_group(request):
-    if request.method == "POST":
-        #Parse data
-        jsgroup = request.POST['group']
-        group = json.loads(jsgroup)
-        message = ''
+    # TODO this should be a GET request, since it doesn't modify data.
+    #Parse data
+    jsgroup = request.POST['group']
+    group = json.loads(jsgroup)
+    message = ''
 
-        #Get users
-        try:
-            gUsers = User.objects.filter(groups__name=group)
-        except ObjectDoesNotExist:
-            message = 'Groups not found'
+    #Get users
+    try:
+        gUsers = User.objects.filter(groups__name=group)
+    except ObjectDoesNotExist:
+        message = 'Groups not found'
 
-        if len(message) == 0:
-            message = 'Success'
+    if len(message) == 0:
+        message = 'Success'
 
-    else:
-        message = 'Not a POST'
 
     users = " ".join(gUsers.values_list('username', flat=True).order_by('username'))
     result = json.dumps({"users": users, "message": message})
     return HttpResponse(result, mimetype='text/json')
 
 
+@ensure_post
 @login_required
 def share(request):
-    if request.method == 'POST':
-        #Parse data
-        jsusernames = request.POST['users']
-        jsgroupnames = request.POST['groups']
-        jsresourcenames = request.POST['resources']
-        usernames = json.loads(jsusernames)
-        groupnames = json.loads(jsgroupnames)
-        resourcenames = json.loads(jsresourcenames)
+    #Parse data
+    jsusernames = request.POST['users']
+    jsgroupnames = request.POST['groups']
+    jsresourcenames = request.POST['resources']
+    usernames = json.loads(jsusernames)
+    groupnames = json.loads(jsgroupnames)
+    resourcenames = json.loads(jsresourcenames)
+    message = ''
+
+    #Get users, resources, groups
+    try:
+        message = 'Users not found'
+        users = User.objects.filter(username__in=usernames)
+        message = 'Resources not found'
+        resources = Resource.objects.filter(filename__in=resourcenames)
+        message = 'Groups not found'
+        groups = Group.objects.filter(name__in=groupnames)
         message = ''
+    except ObjectDoesNotExist:
+        return HttpResponse(message, mimetype='application/javascript')
 
-        #Get users, resources, groups
-        try:
-            message = 'Users not found'
-            users = User.objects.filter(username__in=usernames)
-            message = 'Resources not found'
-            resources = Resource.objects.filter(filename__in=resourcenames)
-            message = 'Groups not found'
-            groups = Group.objects.filter(name__in=groupnames)
-            message = ''
-        except ObjectDoesNotExist:
-            return HttpResponse(message, mimetype='application/javascript')
+    #Assign access rights to users and groups
+    for resource in resources:
+        for user in users:
+            assign('view_resource', user, resource)
+        for group in groups:
+            assign('view_resource', group, resource)
 
-        #Assign access rights to users and groups
-        for resource in resources:
-            for user in users:
-                assign('view_resource', user, resource)
-            for group in groups:
-                assign('view_resource', group, resource)
-
-        message = 'Shared..'
-
-    else:
-        message = 'Something went wrong'
+    message = 'Shared..'
 
     return HttpResponse(message, mimetype='application/javascript')
 
