@@ -32,7 +32,7 @@ $ ->
       if partial_username of cache
         return response(cache[partial_username])
       $.getJSON(
-        "/account/complete_usernames/#{request.term}"
+        "/account/complete_users_and_groups/#{request.term}"
         (data, status, xhr) ->
           cache[partial_username] = data
           response(data))

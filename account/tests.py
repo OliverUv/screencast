@@ -33,9 +33,11 @@ def diff_count(object_type, diff):
     return real_decorator
 
 
-def create_user():
+def create_user(name=None):
     user_id = User.objects.all().count() + 1
     username = 'user %s' % user_id
+    if name:
+        username = name
     password = 'pass'
     user = User.objects.create_user(username, '%s@test.com' % user_id, password)
     user.is_staff = True
@@ -140,3 +142,15 @@ class GeneralTests(HandyTestCase):
             'users': [user_name]
         })
         self.assert_http_bad_request(response, 'POST')
+
+    def test_users_complete(self):
+        usernames = ['bingbong', 'bingbang']
+        for u in usernames:
+            create_user(u)
+        completion_string = 'bin'
+
+        response = self.client.get('/account/complete_users_and_groups/%s/' % completion_string)
+        self.assertEqual(response.status_code, 200)
+        res_content = json.loads(response.content)
+        for u in usernames:
+            self.assertTrue(u in res_content['names'])

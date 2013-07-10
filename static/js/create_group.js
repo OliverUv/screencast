@@ -46,7 +46,7 @@
         if (partial_username in cache) {
           return response(cache[partial_username]);
         }
-        return $.getJSON("/account/complete_usernames/" + request.term, function(data, status, xhr) {
+        return $.getJSON("/account/complete_users_and_groups/" + request.term, function(data, status, xhr) {
           cache[partial_username] = data;
           return response(data);
         });

@@ -55,15 +55,32 @@ def browse(request):
 
 
 @login_required
-def complete_usernames(request, partial_username):
-    if (len(partial_username) < 2):
+def complete_users_and_groups(request, completion_string):
+    if (len(completion_string) < 2):
         return http_json_response([])  # Don't return anything for < 2 chars
 
     max_results = 20
-    matching_names = User.objects.filter(username__icontains=partial_username)
+    matching_names = User.objects.filter(username__icontains=completion_string)
     matching_names = matching_names.order_by('username').values_list('username', flat=True)
-    matching_names = matching_names[:max_results]  # limit number of results
-    return http_json_response(list(matching_names))
+    matching_names = matching_names[:max_results / 2]  # limit number of results
+    matching_names = list(matching_names)
+
+    matching_groups = Group.objects.filter(
+        name__icontains=completion_string,
+        observers=request.user
+    ).prefetch_related('user_set')  # Prefetch the members of each group
+    matching_groups = matching_groups.order_by('name')
+    matching_groups = matching_groups[:max_results / 2]
+
+    groups = {}
+    for g in groups:
+        group_members = [u.username for u in g.user_set.all()]
+        groups[g.name] = group_members
+
+    return http_json_response({
+        'names': list(matching_names),
+        'groups': list(groups)
+    })
 
 
 @login_required
@@ -211,4 +228,3 @@ def launch_applet(request):
     })
 
     return render(request, 'account/applet.html', context)
-
