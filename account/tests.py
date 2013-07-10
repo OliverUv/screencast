@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.test.client import Client
 
 from account.common import http_success
+import models
 
 
 def object_count(object_type):
@@ -52,8 +53,19 @@ def create_user():
 def add_test_data():
     users = [create_user() for _ in range(20)]
 
+    groups = {
+        'group0': (users[0], [users[1], users[2], users[3]]),
+        'group1': (users[4], [users[5], users[6], users[7]])
+    }
+
+    for name, group_members in groups.iteritems():
+        group = models.create_group(name, group_members[0])
+        for u in group_members[1]:
+            u.groups.add(group)
+
     return {
-        'users': users
+        'users': users,
+        'groups': groups
     }
 
 
@@ -92,20 +104,20 @@ class GeneralTests(HandyTestCase):
             'users': [user_name]
         })
         self.assert_http_success(response)
-        self.assert_exists(Group.objects.filter(name=group_name))
+        self.assert_exists(Group.objects.filter(name=group_name, creator=self.user, observers=self.user))
         self.assert_exists(User.objects.filter(username=user_name, groups__name=group_name))
 
     @diff_count(Group, 1)
     def test_new_group_multiple_users(self):
         group_name = 'newgrouponeusertestgn'
-        user_names = [u.username for u in self.test_data['users']][1:]  # Add all users but the first
+        user_names = [u.username for u in self.test_data['users'][1:]]  # Add all users but the first
 
         response = self.client.post('/account/groups/create_group/', {
             'groupname': group_name,
             'users': user_names
         })
         self.assert_http_success(response)
-        self.assert_exists(Group.objects.filter(name=group_name))
+        self.assert_exists(Group.objects.filter(name=group_name, creator=self.user, observers=self.user))
         for user_name in user_names:
             self.assert_exists(User.objects.filter(username=user_name, groups__name=group_name))
 
