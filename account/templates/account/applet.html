@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block head %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/deployJava.js"></script>
+{% endblock %}
+{% block tab5 %}active{% endblock %}
+
+{% block main %}
+<div id="launch_app" class="actionbutton">
+    Launch
+</div>
+<applet codebase="{{ STAITC_URL }}applet" code="Main.class" width="300" height ="250">
+</applet>
+<script>
+    $('#launch_app').click(function() {  
+        deployJava.createWebStartLaunchButton("{{ STATIC_URL }}screencast_webstart.jnlp", '1.7.0');
+    });
+</script>
+{% endblock %}
+
+

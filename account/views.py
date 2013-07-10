@@ -211,3 +211,4 @@ def launch_applet(request):
     })
 
     return render(request, 'account/applet.html', context)
+
