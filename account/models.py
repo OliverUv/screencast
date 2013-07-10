@@ -43,12 +43,12 @@ class Resource(models.Model):
         )
 
 
-def create_group(group_name, creator):
+def create_group(group_name, creating_user):
     '''
     Creates and returns a group, ensuring that the creator has
     the proper rights pertaining to the group.
     '''
-    g = Group(creator=creator, name=group_name)
+    g = Group(creator=creating_user, name=group_name)
     g.save()
-    g.observers.add(creator)
+    g.observers.add(creating_user)
     return g
