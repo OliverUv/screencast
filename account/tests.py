@@ -5,8 +5,8 @@ from django.contrib.auth.models import User, Group
 from django.test import TestCase
 from django.test.client import Client
 
-from account.common import http_success
 import models
+from account.common import http_success
 
 
 def object_count(object_type):
@@ -143,8 +143,8 @@ class GeneralTests(HandyTestCase):
         })
         self.assert_http_bad_request(response, 'POST')
 
-    def test_users_complete(self):
-        usernames = ['bingbong', 'bingbang']
+    def test_completion_users(self):
+        usernames = ['bingbong', 'bingbang', 'BINARY', 'THE GRID']
         for u in usernames:
             create_user(u)
         completion_string = 'bin'
@@ -152,5 +152,51 @@ class GeneralTests(HandyTestCase):
         response = self.client.get('/account/complete_users_and_groups/%s/' % completion_string)
         self.assertEqual(response.status_code, 200)
         res_content = json.loads(response.content)
-        for u in usernames:
+        res_names = res_content['names']
+        self.assertEqual({}, res_content['groups'])
+        self.assertEqual(3, len(res_names))
+        for u in usernames[:-1]:
+            self.assertTrue(u in res_names)
+
+    def test_completion_groups_and_users(self):
+        completion_string = 'bin'
+        groups_users = {
+            'bing0': ['binu0', 'binu1', 'aaaaa'],
+            'dong0': ['binu0', 'binu1', 'bbbbb'],
+            'bing1': ['binu0', 'binu2', 'binu3', 'binu4', 'ccccc'],
+            'dong1': ['binu0', 'binu2', 'binu3', 'binu5', 'ddddd', 'ccccc'],
+            'bing2': [],
+            'dong2': []
+        }
+        non_group_users = ['binu6', 'eeeee']
+        all_groups = groups_users.keys()
+        all_users = set()
+        for u in non_group_users:
+            all_users.add(u)
+        for group, group_members in groups_users.iteritems():
+            for u in group_members:
+                all_users.add(u)
+
+        users = {}
+        groups = {}
+        for u in all_users:  # Create all users
+            users[u] = create_user(u)
+        for g in all_groups:  # Create groups and add the users to them
+            group = models.create_group(g, self.user)
+            groups[g] = group
+            for u in groups_users[g]:
+                users[u].groups.add(group)
+
+        response = self.client.get('/account/complete_users_and_groups/%s/' % completion_string)
+        self.assertEqual(response.status_code, 200)
+        res_content = json.loads(response.content)
+
+        completed_names = ['binu0', 'binu1', 'binu2', 'binu3', 'binu4', 'binu5', 'binu6']
+        completed_groups = ['bing0', 'bing1', 'bing2']
+
+        for u in completed_names:
             self.assertTrue(u in res_content['names'])
+        for g in completed_groups:
+            self.assertTrue(g in res_content['groups'].keys())
+            for u in groups_users[g]:
+                self.assertTrue(u in res_content['groups'][g])

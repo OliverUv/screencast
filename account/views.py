@@ -73,13 +73,13 @@ def complete_users_and_groups(request, completion_string):
     matching_groups = matching_groups[:max_results / 2]
 
     groups = {}
-    for g in groups:
+    for g in matching_groups:
         group_members = [u.username for u in g.user_set.all()]
         groups[g.name] = group_members
 
     return http_json_response({
         'names': list(matching_names),
-        'groups': list(groups)
+        'groups': groups
     })
 
 
