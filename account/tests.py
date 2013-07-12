@@ -86,6 +86,23 @@ class HandyTestCase(TestCase):
         if substring:
             self.assertTrue(substring in res_content['message'])
 
+    def create_users_and_fill_groups(self, groups_users, non_group_users):
+        all_groups = groups_users.keys()
+        all_users = set()
+        for u in non_group_users:
+            all_users.add(u)
+        for group, group_members in groups_users.iteritems():
+            for u in group_members:
+                all_users.add(u)
+
+        users = {}
+        for u in all_users:  # Create all users
+            users[u] = create_user(u)
+        for g in all_groups:  # Create groups and add the users to them
+            group = models.create_group(g, self.user)
+            for u in groups_users[g]:
+                users[u].groups.add(group)
+
 
 class GeneralTests(HandyTestCase):
     def setUp(self):
@@ -145,6 +162,7 @@ class GeneralTests(HandyTestCase):
 
     def test_completion_users(self):
         usernames = ['bingbong', 'bingbang', 'BINARY', 'THE GRID']
+        models.create_group('thisgroup_should_not_be_completed', self.user)
         for u in usernames:
             create_user(u)
         completion_string = 'bin'
@@ -169,23 +187,7 @@ class GeneralTests(HandyTestCase):
             'dong2': []
         }
         non_group_users = ['binu6', 'eeeee']
-        all_groups = groups_users.keys()
-        all_users = set()
-        for u in non_group_users:
-            all_users.add(u)
-        for group, group_members in groups_users.iteritems():
-            for u in group_members:
-                all_users.add(u)
-
-        users = {}
-        groups = {}
-        for u in all_users:  # Create all users
-            users[u] = create_user(u)
-        for g in all_groups:  # Create groups and add the users to them
-            group = models.create_group(g, self.user)
-            groups[g] = group
-            for u in groups_users[g]:
-                users[u].groups.add(group)
+        self.create_users_and_fill_groups(groups_users, non_group_users)
 
         response = self.client.get('/account/complete_users_and_groups/%s/' % completion_string)
         self.assertEqual(response.status_code, 200)
@@ -194,8 +196,35 @@ class GeneralTests(HandyTestCase):
         completed_names = ['binu0', 'binu1', 'binu2', 'binu3', 'binu4', 'binu5', 'binu6']
         completed_groups = ['bing0', 'bing1', 'bing2']
 
+        self.assertEqual(len(completed_names), len(res_content['names']))
+        self.assertEqual(len(completed_groups), len(res_content['groups']))
         for u in completed_names:
             self.assertTrue(u in res_content['names'])
+        for g in completed_groups:
+            self.assertTrue(g in res_content['groups'].keys())
+            for u in groups_users[g]:
+                self.assertTrue(u in res_content['groups'][g])
+
+    def test_completion_groups(self):
+        completion_string = 'bin'
+        groups_users = {
+            'bing0': ['aaaaa', 'zzzzz', 'ccccc'],
+            'bing1': ['aaaaa', 'ddddd', 'xxxxx'],
+            'dong0': ['wwwww', 'ddddd', 'ccccc']
+        }
+        non_group_users = ['fffff', 'eeeee']
+        self.create_users_and_fill_groups(groups_users, non_group_users)
+
+        response = self.client.get('/account/complete_users_and_groups/%s/' % completion_string)
+        self.assertEqual(response.status_code, 200)
+        res_content = json.loads(response.content)
+
+        completed_names = []
+        completed_groups = ['bing0', 'bing1']
+
+        self.assertEqual(len(completed_names), len(res_content['names']))
+        self.assertEqual(len(completed_groups), len(res_content['groups']))
+        self.assertEqual(completed_names, res_content['names'])
         for g in completed_groups:
             self.assertTrue(g in res_content['groups'].keys())
             for u in groups_users[g]:
