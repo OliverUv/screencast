@@ -1,29 +1,20 @@
 {% extends "base.html" %}
 {% block head %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/creategroup.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/create_group.js"></script>
+    <style type="text/css" media="screen">
+        background-color: #F00;
+    </style>
 {% endblock %}
 {% block tab4 %}active{% endblock %}
 
 {% block main %}
 <div class='mainContainer'>
-    <p> Select users and/or groups:</p>
-    <ol id="userlist" class="cleanlist">
-        {% for user in users %}
-            <li class="user">{{ user.username }}</li>
-        {% endfor %}
-        {% for group in groups %}
-        <li class="group"><span class="viewbutton">[+]</span><span class="switchbutton">{{ group.name }}</span></li>
-        {% endfor %}
-    </ol>
-
-    <div id="groupview">
-        <p></p>
-        <ul>
-        </ul>
+    <div class="ui-widget">
+        <label for="username_input">Type the usernames you want to add here:</label>
+        <input id="username_input" size="50"/>
     </div>
 
-    <ol id="grouplist" class="cleanlist">
-        <li>Included:</li>
+    <ol id="selected_users" class="cleanlist">
     </ol>
 
     Name your group:<input type="text" id="groupnameinput" placeholder="Name.."><br>

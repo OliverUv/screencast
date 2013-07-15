@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from models import Resource
 from guardian.shortcuts import get_objects_for_user, assign
-from account.common import http_badrequest, http_success, ensure_post
+from account.common import http_badrequest, http_success, ensure_post, http_json_response
 import json
 import models
 
@@ -52,6 +52,33 @@ def browse(request):
     })
 
     return render(request, 'account/browse.html', context)
+
+
+@login_required
+def complete_users_and_groups(request, completion_string):
+    if (len(completion_string) < 2):
+        return http_json_response([])  # Don't return anything for < 2 chars
+
+    max_results = 20
+    matching_names = User.objects.filter(username__icontains=completion_string)
+    matching_names = matching_names.order_by('username').values_list('username', flat=True)
+    matching_names = matching_names[:max_results / 2]  # limit number of results
+    matching_names = list(matching_names)
+    users = [{'value': n, 'category': ''} for n in matching_names]
+
+    matching_groups = Group.objects.filter(
+        name__icontains=completion_string,
+        observers=request.user
+    ).prefetch_related('user_set')  # Prefetch the members of each group
+    matching_groups = matching_groups.order_by('name')
+    matching_groups = matching_groups[:max_results / 2]
+    groups = [{
+        'value': g.name,
+        'category': 'groups',
+        'members': [u.username for u in g.user_set.all()]}
+        for g in matching_groups]
+
+    return http_json_response(users + groups)
 
 
 @login_required
@@ -133,7 +160,6 @@ def get_group(request):
     if len(message) == 0:
         message = 'Success'
 
-
     users = " ".join(gUsers.values_list('username', flat=True).order_by('username'))
     result = json.dumps({"users": users, "message": message})
     return HttpResponse(result, mimetype='text/json')
@@ -200,4 +226,3 @@ def launch_applet(request):
     })
 
     return render(request, 'account/applet.html', context)
-
