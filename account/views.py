@@ -64,6 +64,7 @@ def complete_users_and_groups(request, completion_string):
     matching_names = matching_names.order_by('username').values_list('username', flat=True)
     matching_names = matching_names[:max_results / 2]  # limit number of results
     matching_names = list(matching_names)
+    users = [{'value': n, 'category': ''} for n in matching_names]
 
     matching_groups = Group.objects.filter(
         name__icontains=completion_string,
@@ -71,16 +72,13 @@ def complete_users_and_groups(request, completion_string):
     ).prefetch_related('user_set')  # Prefetch the members of each group
     matching_groups = matching_groups.order_by('name')
     matching_groups = matching_groups[:max_results / 2]
+    groups = [{
+        'value': g.name,
+        'category': 'groups',
+        'members': [u.username for u in g.user_set.all()]}
+        for g in matching_groups]
 
-    groups = {}
-    for g in matching_groups:
-        group_members = [u.username for u in g.user_set.all()]
-        groups[g.name] = group_members
-
-    return http_json_response({
-        'names': list(matching_names),
-        'groups': groups
-    })
+    return http_json_response(users + groups)
 
 
 @login_required

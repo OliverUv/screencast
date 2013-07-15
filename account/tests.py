@@ -160,24 +160,28 @@ class GeneralTests(HandyTestCase):
         })
         self.assert_http_bad_request(response, 'POST')
 
-    def test_completion_users(self):
-        usernames = ['bingbong', 'bingbang', 'BINARY', 'THE GRID']
-        models.create_group('thisgroup_should_not_be_completed', self.user)
-        for u in usernames:
-            create_user(u)
+    def test_completion_only_users(self):
+        groups_users = {
+            'dong0': ['binu0', 'binu1', 'bbbbb'],
+            'dong1': ['binu0', 'binu2', 'binu3', 'binu4', 'ddddd', 'ccccc'],
+            'dong2': []
+        }
+        non_group_users = ['binu5', 'xaxax']
         completion_string = 'bin'
+        completed_names = ['binu0', 'binu1', 'binu2', 'binu3', 'binu4', 'binu5']
+
+        self.create_users_and_fill_groups(groups_users, non_group_users)
+
+        expected_names = [{'value': n, 'category': ''} for n in completed_names]
+        expected_groups = []
+        expected_result = expected_names + expected_groups
 
         response = self.client.get('/account/complete_users_and_groups/%s/' % completion_string)
         self.assertEqual(response.status_code, 200)
-        res_content = json.loads(response.content)
-        res_names = res_content['names']
-        self.assertEqual({}, res_content['groups'])
-        self.assertEqual(3, len(res_names))
-        for u in usernames[:-1]:
-            self.assertTrue(u in res_names)
+        parsed_response = json.loads(response.content)
+        self.assertItemsEqual(parsed_response, expected_result)
 
     def test_completion_groups_and_users(self):
-        completion_string = 'bin'
         groups_users = {
             'bing0': ['binu0', 'binu1', 'aaaaa'],
             'dong0': ['binu0', 'binu1', 'bbbbb'],
@@ -187,45 +191,48 @@ class GeneralTests(HandyTestCase):
             'dong2': []
         }
         non_group_users = ['binu6', 'eeeee']
+        completion_string = 'bin'
+        completed_names = ['binu0', 'binu1', 'binu2', 'binu3', 'binu4', 'binu5', 'binu6']
+        completed_groups = ['bing0', 'bing1', 'bing2']
+
+        expected_names = [{'value': n, 'category': ''} for n in completed_names]
+        expected_groups = [{
+            'value': g,
+            'category': 'groups',
+            'members': groups_users[g]}
+            for g in completed_groups]
+        expected_result = expected_names + expected_groups
+
         self.create_users_and_fill_groups(groups_users, non_group_users)
 
         response = self.client.get('/account/complete_users_and_groups/%s/' % completion_string)
         self.assertEqual(response.status_code, 200)
-        res_content = json.loads(response.content)
+        parsed_response = json.loads(response.content)
 
-        completed_names = ['binu0', 'binu1', 'binu2', 'binu3', 'binu4', 'binu5', 'binu6']
-        completed_groups = ['bing0', 'bing1', 'bing2']
+        self.assertItemsEqual(parsed_response, expected_result)
 
-        self.assertEqual(len(completed_names), len(res_content['names']))
-        self.assertEqual(len(completed_groups), len(res_content['groups']))
-        for u in completed_names:
-            self.assertTrue(u in res_content['names'])
-        for g in completed_groups:
-            self.assertTrue(g in res_content['groups'].keys())
-            for u in groups_users[g]:
-                self.assertTrue(u in res_content['groups'][g])
-
-    def test_completion_groups(self):
-        completion_string = 'bin'
+    def test_completion_only_groups(self):
         groups_users = {
             'bing0': ['aaaaa', 'zzzzz', 'ccccc'],
             'bing1': ['aaaaa', 'ddddd', 'xxxxx'],
             'dong0': ['wwwww', 'ddddd', 'ccccc']
         }
         non_group_users = ['fffff', 'eeeee']
+        completion_string = 'bin'
+        completed_groups = ['bing0', 'bing1']
+
+        expected_names = []
+        expected_groups = [{
+            'value': g,
+            'category': 'groups',
+            'members': groups_users[g]}
+            for g in completed_groups]
+        expected_result = expected_names + expected_groups
+
         self.create_users_and_fill_groups(groups_users, non_group_users)
 
         response = self.client.get('/account/complete_users_and_groups/%s/' % completion_string)
         self.assertEqual(response.status_code, 200)
-        res_content = json.loads(response.content)
+        parsed_response = json.loads(response.content)
 
-        completed_names = []
-        completed_groups = ['bing0', 'bing1']
-
-        self.assertEqual(len(completed_names), len(res_content['names']))
-        self.assertEqual(len(completed_groups), len(res_content['groups']))
-        self.assertEqual(completed_names, res_content['names'])
-        for g in completed_groups:
-            self.assertTrue(g in res_content['groups'].keys())
-            for u in groups_users[g]:
-                self.assertTrue(u in res_content['groups'][g])
+        self.assertItemsEqual(parsed_response, expected_result)
