@@ -81,10 +81,10 @@ class HandyTestCase(TestCase):
 
     def assert_http_bad_request(self, response, substring=None):
         self.assertEqual(response.status_code, 400)
-        res_content = json.loads(response.content)
-        self.assertEqual(res_content['status'], 'failed')
+        parsed_response = json.loads(response.content)
+        self.assertEqual(parsed_response['status'], 'failed')
         if substring:
-            self.assertTrue(substring in res_content['message'])
+            self.assertTrue(substring in parsed_response['message'])
 
     def create_users_and_fill_groups(self, groups_users, non_group_users):
         all_groups = groups_users.keys()
