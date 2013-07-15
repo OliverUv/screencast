@@ -3,7 +3,7 @@
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   $(function() {
-    var add_to_selected_users, cache, create_suggestion_box, dom_complete_box, dom_selected_list, selected_users, update_user_selection;
+    var add_to_selected_users, cache, create_category_item, create_suggestion_item, dom_complete_box, dom_selected_list, selected_users, update_user_selection;
     dom_complete_box = $("#username_input");
     dom_selected_list = $('#selected_users');
     selected_users = [];
@@ -24,7 +24,7 @@
       }
       return _results;
     };
-    create_suggestion_box = function(username) {
+    create_suggestion_item = function(username) {
       var box_class;
       box_class = "non_added_user";
       if (__indexOf.call(selected_users, username) >= 0) {
@@ -32,6 +32,29 @@
       }
       return $("<li class='" + box_class + "'><a>" + username + "</a></li>");
     };
+    create_category_item = function(category_name) {
+      return $("<li class='ui-autocomplete-category'>" + category_name + "</li>");
+    };
+    $.widget("custom.user_group_complete", $.ui.autocomplete, {
+      _renderItem: function(ul, item) {
+        return create_suggestion_item(item.value).appendTo(ul);
+      },
+      _renderMenu: function(ul, items) {
+        var current_category, item, that, _i, _len, _results;
+        that = this;
+        current_category = '';
+        _results = [];
+        for (_i = 0, _len = items.length; _i < _len; _i++) {
+          item = items[_i];
+          if (current_category !== item.category) {
+            ul.append(create_category_item(item.category));
+            current_category = item.category;
+          }
+          _results.push(that._renderItemData(ul, item));
+        }
+        return _results;
+      }
+    });
     cache = {};
     dom_complete_box.bind("keydown", function(event) {
       if (event.keyCode === $.ui.keyCode.ENTER) {
@@ -39,15 +62,15 @@
         return event.preventDefault();
       }
     });
-    dom_complete_box.autocomplete({
+    return dom_complete_box.user_group_complete({
       source: function(request, response) {
-        var partial_username;
-        partial_username = request.term;
-        if (partial_username in cache) {
-          return response(cache[partial_username]);
+        var search_string;
+        search_string = request.term;
+        if (search_string in cache) {
+          return response(cache[search_string]);
         }
         return $.getJSON("/account/complete_users_and_groups/" + request.term, function(data, status, xhr) {
-          cache[partial_username] = data;
+          cache[search_string] = data;
           return response(data);
         });
       },
@@ -62,9 +85,6 @@
         }
       }
     });
-    return dom_complete_box.data("ui-autocomplete")._renderItem = function(ul, item) {
-      return create_suggestion_box(item.value).appendTo(ul);
-    };
   });
 
 }).call(this);
