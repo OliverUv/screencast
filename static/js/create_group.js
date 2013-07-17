@@ -3,26 +3,54 @@
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   $(function() {
-    var add_to_selected_users, cache, create_category_item, create_suggestion_item, dom_complete_box, dom_selected_list, selected_users, update_user_selection;
+    var cache, create_category_item, create_suggestion_item, dom_complete_box, dom_selected_group_list, dom_selected_users_list, filter_selected_users, select_group, select_user, selected_group, selected_group_members, selected_users, update_selected_users;
     dom_complete_box = $("#username_input");
-    dom_selected_list = $('#selected_users');
+    dom_selected_users_list = $('#selected_users');
+    dom_selected_group_list = $('#selected_group');
     selected_users = [];
-    add_to_selected_users = function(username) {
+    selected_group = '';
+    selected_group_members = [];
+    filter_selected_users = function(user_group_list) {
+      return user_group_list.filter(function(item) {
+        var _ref;
+        if (item.category === '' && (_ref = item.value, __indexOf.call(selected_users, _ref) >= 0)) {
+          return false;
+        }
+        return true;
+      });
+    };
+    update_selected_users = function() {
+      var username, _i, _j, _len, _len1, _results;
+      dom_selected_users_list.empty();
+      for (_i = 0, _len = selected_users.length; _i < _len; _i++) {
+        username = selected_users[_i];
+        dom_selected_users_list.append($("<li class='added_user'>" + username + "</li>"));
+      }
+      dom_selected_group_list.empty();
+      if (select_group !== '') {
+        dom_selected_group_list.append($("<li class='selected_group_header'>" + selected_group + "</li>"));
+        _results = [];
+        for (_j = 0, _len1 = selected_group_members.length; _j < _len1; _j++) {
+          username = selected_group_members[_j];
+          _results.push(dom_selected_group_list.append(create_suggestion_item(username)));
+        }
+        return _results;
+      }
+    };
+    select_user = function(username) {
       if (__indexOf.call(selected_users, username) >= 0) {
         return;
       }
       selected_users.push(username);
-      return update_user_selection();
+      return update_selected_users();
     };
-    update_user_selection = function() {
-      var username, _i, _len, _results;
-      dom_selected_list.empty();
-      _results = [];
-      for (_i = 0, _len = selected_users.length; _i < _len; _i++) {
-        username = selected_users[_i];
-        _results.push(dom_selected_list.append($("<li class='added_user'>" + username + "</li>")));
+    select_group = function(group_name, group_members) {
+      if (group_name === selected_group) {
+        return;
       }
-      return _results;
+      selected_group = group_name;
+      selected_group_members = group_members;
+      return update_selected_users();
     };
     create_suggestion_item = function(username) {
       var box_class;
@@ -58,7 +86,7 @@
     cache = {};
     dom_complete_box.bind("keydown", function(event) {
       if (event.keyCode === $.ui.keyCode.ENTER) {
-        add_to_selected_users($(this).val());
+        select_user($(this).val());
         return event.preventDefault();
       }
     });
@@ -67,22 +95,24 @@
         var search_string;
         search_string = request.term;
         if (search_string in cache) {
-          return response(cache[search_string]);
+          return response(filter_selected_users(cache[search_string]));
         }
         return $.getJSON("/account/complete_users_and_groups/" + request.term, function(data, status, xhr) {
           cache[search_string] = data;
-          return response(data);
+          return response(filter_selected_users(data));
         });
       },
       minLength: 2,
       select: function(event, ui) {
         if (ui.item != null) {
-          add_to_selected_users(ui.item.value);
-          return event.preventDefault();
-        } else {
-          alert("Nothing selected, input was " + this.value);
-          return event.preventDefault();
+          if (ui.item.category === '') {
+            select_user(ui.item.value);
+          } else if (ui.item.category === 'groups') {
+            select_group(ui.item.value, ui.item.members);
+          }
         }
+        dom_complete_box.val('');
+        return false;
       }
     });
   });

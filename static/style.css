@@ -13,9 +13,9 @@
 }
 
 #navbar ul li a { 
-text-decoration: none; 
-padding: .2em 1em; /* Gives the link space inside it's individual block. */ 
-background-color: #0772A1;
+    text-decoration: none; 
+    padding: .2em 1em; /* Gives the link space inside it's individual block. */ 
+    background-color: #0772A1;
 } 
 
 .active a{
@@ -209,6 +209,13 @@ button:hover {
 .added_user {
     padding: 2px;
     background-color: #39F;
+}
+.selected_group_header {
+    padding: .2em .4em;
+    margin: .8em 0 .2em;
+    line-height: 1.5;
+    font-weight: bold;
+    background-color: #FFD070;
 }
 .ui-autocomplete-category {
     padding: .2em .4em;
