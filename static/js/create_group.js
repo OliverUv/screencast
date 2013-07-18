@@ -3,13 +3,13 @@
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   $(function() {
-    var cache, create_category_item, create_suggestion_item, dom_complete_box, dom_selected_group_column, dom_selected_group_list, dom_selected_group_name, dom_selected_user_column, dom_selected_users_list, filter_selected_users, refresh_gui, select_group, select_user, selected_group, selected_group_members, selected_users;
+    var cache, create_category_list_item, create_group_box, create_username_box, dom_complete_box, dom_selected_group_column, dom_selected_group_list, dom_selected_group_name, dom_selected_user_column, dom_selected_users_list, filter_selected_users, refresh_gui, select_group, select_user, selected_group, selected_group_members, selected_users;
     dom_complete_box = $("#username_input");
     dom_selected_users_list = $('#selected_users');
     dom_selected_user_column = $('#usercolumn');
     dom_selected_group_column = $('#groupcolumn');
     dom_selected_group_list = $('#selected_group');
-    dom_selected_group_name = $('#groupname');
+    dom_selected_group_name = $('#group_name');
     selected_users = [];
     selected_group = '';
     selected_group_members = [];
@@ -36,7 +36,7 @@
         dom_selected_group_name.text(selected_group);
         for (_j = 0, _len1 = selected_group_members.length; _j < _len1; _j++) {
           username = selected_group_members[_j];
-          dom_selected_group_list.append(create_suggestion_item(username));
+          dom_selected_group_list.append(create_username_box(username));
         }
         return dom_selected_group_column.show();
       }
@@ -56,7 +56,7 @@
       selected_group_members = group_members;
       return refresh_gui();
     };
-    create_suggestion_item = function(username) {
+    create_username_box = function(username) {
       var box_class;
       box_class = "non_added_user";
       if (__indexOf.call(selected_users, username) >= 0) {
@@ -64,12 +64,36 @@
       }
       return $("<li class='" + box_class + "'><a>" + username + "</a></li>");
     };
-    create_category_item = function(category_name) {
+    create_group_box = function(group_name, group_members) {
+      var all_members_selected, any_member_selected, username, _i, _len;
+      all_members_selected = true;
+      any_member_selected = false;
+      for (_i = 0, _len = group_members.length; _i < _len; _i++) {
+        username = group_members[_i];
+        if (__indexOf.call(selected_users, username) >= 0) {
+          any_member_selected = true;
+        } else {
+          all_members_selected = false;
+        }
+      }
+      if (all_members_selected) {
+        return $("<li class='all_selected_group'><a>" + group_name + "</a></li>");
+      } else if (any_member_selected) {
+        return $("<li class='some_selected_group'><a>" + group_name + "</a></li>");
+      } else {
+        return $("<li class='none_selected_group'><a>" + group_name + "</a></li>");
+      }
+    };
+    create_category_list_item = function(category_name) {
       return $("<li class='ui-autocomplete-category'>" + category_name + "</li>");
     };
     $.widget("custom.user_group_complete", $.ui.autocomplete, {
       _renderItem: function(ul, item) {
-        return create_suggestion_item(item.value).appendTo(ul);
+        if (item.category === '') {
+          return create_username_box(item.value).appendTo(ul);
+        } else {
+          return create_group_box(item.value, item.members).appendTo(ul);
+        }
       },
       _renderMenu: function(ul, items) {
         var current_category, item, that, _i, _len, _results;
@@ -79,7 +103,7 @@
         for (_i = 0, _len = items.length; _i < _len; _i++) {
           item = items[_i];
           if (current_category !== item.category) {
-            ul.append(create_category_item(item.category));
+            ul.append(create_category_list_item(item.category));
             current_category = item.category;
           }
           _results.push(that._renderItemData(ul, item));

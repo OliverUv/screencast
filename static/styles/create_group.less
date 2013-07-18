@@ -1,5 +1,5 @@
 @selected_color: #78FF66;
-@some_selected_color: #48993D;
+@some_selected_color: #FFD070;
 @non_selected_color: #fff;
 
 .rounded-corners(@radius: 2px) {
@@ -9,11 +9,10 @@
     -o-border-radius: @radius;
     border-radius: @radius;
 }
-.user_box {
+.box {
     .rounded-corners;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #444;
+    padding: 2px;
+    margin: 2px;
 }
 .list {
     list-style-type: none;
@@ -35,11 +34,11 @@
     overflow: hidden;
 }
 .added_user {
-    .user_box;
+    .box;
     background-color: @selected_color;
 }
 .non_added_user {
-    .user_box;
+    .box;
     background-color: @non_selected_color;
 }
 .group_header {
@@ -48,16 +47,16 @@
     line-height: 1.5;
     font-weight: bold;
 }
-.selected_group_header {
-    .group_header;
+.all_selected_group {
+    .box;
     background-color: @selected_color;
 }
-.some_selected_group_header {
-    .group_header;
+.some_selected_group {
+    .box;
     background-color: @some_selected_color;
 }
-.non_selected_group_header {
-    .group_header;
+.none_selected_group {
+    .box;
     background-color: @non_selected_color;
 }
 .ui-autocomplete-category {
@@ -65,5 +64,5 @@
     margin: .8em 0 .2em;
     line-height: 1.5;
     font-weight: bold;
-    background-color: #FFD070;
+    background-color: #b4b4b4;
 }
