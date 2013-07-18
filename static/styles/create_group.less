@@ -1,0 +1,69 @@
+@selected_color: #78FF66;
+@some_selected_color: #48993D;
+@non_selected_color: #fff;
+
+.rounded-corners(@radius: 2px) {
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+    -ms-border-radius: @radius;
+    -o-border-radius: @radius;
+    border-radius: @radius;
+}
+.user_box {
+    .rounded-corners;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #444;
+}
+.list {
+    list-style-type: none;
+}
+.column {
+    min-height: 1px;
+    text-align: left; 
+    margin: 5px;
+    width: 42%;
+    padding: 5px;
+    float: left;
+    background-color: #b4b4b4;
+}
+.row {
+    display: block;
+    width: 80%;
+    margin: 20px auto 30px auto;
+    float: none;
+    overflow: hidden;
+}
+.added_user {
+    .user_box;
+    background-color: @selected_color;
+}
+.non_added_user {
+    .user_box;
+    background-color: @non_selected_color;
+}
+.group_header {
+    padding: .2em .4em;
+    margin: .8em 0 .2em;
+    line-height: 1.5;
+    font-weight: bold;
+}
+.selected_group_header {
+    .group_header;
+    background-color: @selected_color;
+}
+.some_selected_group_header {
+    .group_header;
+    background-color: @some_selected_color;
+}
+.non_selected_group_header {
+    .group_header;
+    background-color: @non_selected_color;
+}
+.ui-autocomplete-category {
+    padding: .2em .4em;
+    margin: .8em 0 .2em;
+    line-height: 1.5;
+    font-weight: bold;
+    background-color: #FFD070;
+}

@@ -1,7 +1,10 @@
 $ ->
   dom_complete_box = $("#username_input")
   dom_selected_users_list = $('#selected_users')
+  dom_selected_user_column = $('#usercolumn')
+  dom_selected_group_column = $('#groupcolumn')
   dom_selected_group_list = $('#selected_group')
+  dom_selected_group_name = $('#groupname')
   selected_users = []
   selected_group = ''
   selected_group_members = []
@@ -12,26 +15,30 @@ $ ->
         return false
       return true)
 
-  update_selected_users = () ->
+  refresh_gui = () ->
     dom_selected_users_list.empty()
     for username in selected_users
       dom_selected_users_list.append($("<li class='added_user'>#{username}</li>"))
     dom_selected_group_list.empty()
-    if select_group != ''
-      dom_selected_group_list.append($("<li class='selected_group_header'>#{selected_group}</li>"))
+
+    if selected_group == ''
+      dom_selected_group_column.hide()
+    else
+      dom_selected_group_name.text(selected_group)
       for username in selected_group_members
         dom_selected_group_list.append(create_suggestion_item(username))
+      dom_selected_group_column.show()
 
   select_user = (username) ->
     return if username in selected_users
     selected_users.push(username)
-    update_selected_users()
+    refresh_gui()
 
   select_group = (group_name, group_members) ->
     return if group_name == selected_group
     selected_group = group_name
     selected_group_members = group_members
-    update_selected_users()
+    refresh_gui()
 
   create_suggestion_item = (username) ->
     box_class = "non_added_user"
@@ -57,11 +64,6 @@ $ ->
   })
 
   cache = {}
-
-  dom_complete_box.bind("keydown", (event) ->
-    if event.keyCode == $.ui.keyCode.ENTER
-      select_user($(this).val())
-      event.preventDefault())
 
   dom_complete_box.user_group_complete({
     source: (request, response) ->

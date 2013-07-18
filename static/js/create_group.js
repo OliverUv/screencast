@@ -3,10 +3,13 @@
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   $(function() {
-    var cache, create_category_item, create_suggestion_item, dom_complete_box, dom_selected_group_list, dom_selected_users_list, filter_selected_users, select_group, select_user, selected_group, selected_group_members, selected_users, update_selected_users;
+    var cache, create_category_item, create_suggestion_item, dom_complete_box, dom_selected_group_column, dom_selected_group_list, dom_selected_group_name, dom_selected_user_column, dom_selected_users_list, filter_selected_users, refresh_gui, select_group, select_user, selected_group, selected_group_members, selected_users;
     dom_complete_box = $("#username_input");
     dom_selected_users_list = $('#selected_users');
+    dom_selected_user_column = $('#usercolumn');
+    dom_selected_group_column = $('#groupcolumn');
     dom_selected_group_list = $('#selected_group');
+    dom_selected_group_name = $('#groupname');
     selected_users = [];
     selected_group = '';
     selected_group_members = [];
@@ -19,22 +22,23 @@
         return true;
       });
     };
-    update_selected_users = function() {
-      var username, _i, _j, _len, _len1, _results;
+    refresh_gui = function() {
+      var username, _i, _j, _len, _len1;
       dom_selected_users_list.empty();
       for (_i = 0, _len = selected_users.length; _i < _len; _i++) {
         username = selected_users[_i];
         dom_selected_users_list.append($("<li class='added_user'>" + username + "</li>"));
       }
       dom_selected_group_list.empty();
-      if (select_group !== '') {
-        dom_selected_group_list.append($("<li class='selected_group_header'>" + selected_group + "</li>"));
-        _results = [];
+      if (selected_group === '') {
+        return dom_selected_group_column.hide();
+      } else {
+        dom_selected_group_name.text(selected_group);
         for (_j = 0, _len1 = selected_group_members.length; _j < _len1; _j++) {
           username = selected_group_members[_j];
-          _results.push(dom_selected_group_list.append(create_suggestion_item(username)));
+          dom_selected_group_list.append(create_suggestion_item(username));
         }
-        return _results;
+        return dom_selected_group_column.show();
       }
     };
     select_user = function(username) {
@@ -42,7 +46,7 @@
         return;
       }
       selected_users.push(username);
-      return update_selected_users();
+      return refresh_gui();
     };
     select_group = function(group_name, group_members) {
       if (group_name === selected_group) {
@@ -50,7 +54,7 @@
       }
       selected_group = group_name;
       selected_group_members = group_members;
-      return update_selected_users();
+      return refresh_gui();
     };
     create_suggestion_item = function(username) {
       var box_class;
@@ -84,12 +88,6 @@
       }
     });
     cache = {};
-    dom_complete_box.bind("keydown", function(event) {
-      if (event.keyCode === $.ui.keyCode.ENTER) {
-        select_user($(this).val());
-        return event.preventDefault();
-      }
-    });
     return dom_complete_box.user_group_complete({
       source: function(request, response) {
         var search_string;

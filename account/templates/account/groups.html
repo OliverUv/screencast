@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/create_group.js"></script>
-    <style type="text/css" media="screen">
-        background-color: #F00;
-    </style>
+    <link rel="stylesheet" href="{{ STATIC_URL }}styles/create_group.css">
 {% endblock %}
 {% block tab4 %}active{% endblock %}
 
@@ -14,13 +12,22 @@
         <input id="username_input" size="50"/>
     </div>
 
-    <ol id="selected_users" class="cleanlist"></ol>
+    <div class="row">
+        <div id="usercolumn" class="column">
+            <h4>Selected users</h4>
+            <ol id="selected_users" class="list"></ol>
+        </div>
+        <div id="groupcolumn" class="column" style="display:none;">
+            <h4>Users in group <span id="groupname">--no group selected--</span></h4>
+            <ol id="selected_group" class="list"></ol>
+        </div>
+    </div>
 
-    <ol id="selected_group" class="cleanlist"></ol>
-
-    Name your group:<input type="text" id="groupnameinput" placeholder="Name.."><br>
-    <p id="groupbutton" class="actionbutton">Create</p>
-    <p><i id="result"></i></p>
+    <div class="row">
+        <label for="groupnameinput">Name your group:</label>
+        <input type="text" id="groupnameinput" placeholder="Name.."/>
+        <p id="groupbutton" class="actionbutton">Create</p>
+        <p><i id="result"></i></p>
+    </div>
 </div>
 {% endblock %}
-
