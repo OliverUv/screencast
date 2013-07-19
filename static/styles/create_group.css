@@ -6,6 +6,7 @@
   border-radius: 2px;
   padding: 2px;
   margin: 2px;
+  cursor: pointer;
 }
 .list {
   list-style-type: none;
@@ -22,7 +23,7 @@
 .row {
   display: block;
   width: 80%;
-  margin: 20px auto 30px auto;
+  margin: 10px auto 10px auto;
   float: none;
   overflow: hidden;
 }
@@ -47,8 +48,6 @@
   background-color: #ffffff;
 }
 .group_header {
-  padding: .2em .4em;
-  margin: .8em 0 .2em;
   line-height: 1.5;
   font-weight: bold;
 }

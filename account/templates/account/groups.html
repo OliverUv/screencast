@@ -7,13 +7,20 @@
 
 {% block main %}
 <div class='mainContainer'>
-    <div class="ui-widget">
-        <label for="username_input">Type the usernames you want to add here:</label>
+    <div class="row">
+        <label for="groupnameinput">Name your group:</label>
+        <input type="text" id="groupnameinput" placeholder="Name.."/>
+        <p id="create_group_button" class="actionbutton">Create</p>
+        <p><em id="result"></em></p>
+    </div>
+
+    <div class="row ui-widget">
+        <label for="username_input">Type usernames or groupnames you want to add here:</label>
         <input id="username_input" size="50"/>
     </div>
 
     <div class="row">
-        <div id="usercolumn" class="column">
+        <div id="usercolumn" class="column" style="display:none;">
             <h4>Selected users</h4>
             <ol id="selected_users" class="list"></ol>
         </div>
@@ -23,11 +30,5 @@
         </div>
     </div>
 
-    <div class="row">
-        <label for="groupnameinput">Name your group:</label>
-        <input type="text" id="groupnameinput" placeholder="Name.."/>
-        <p id="groupbutton" class="actionbutton">Create</p>
-        <p><i id="result"></i></p>
-    </div>
 </div>
 {% endblock %}
