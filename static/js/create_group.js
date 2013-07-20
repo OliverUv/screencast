@@ -3,7 +3,7 @@
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   $(function() {
-    var cache, create_category_list_item, create_group_complete_box, create_username_clickable_box, create_username_complete_box, currently_selected_users, deselect_user, dom_complete_box, dom_create_button, dom_group_name_box, dom_result, dom_selected_group_column, dom_selected_group_list, dom_selected_group_name, dom_selected_user_column, dom_selected_users_list, filter_selected_users, get_group_selection_class, get_username_selection_class, past_selected_users, refresh_gui, select_group, select_user, selected_group, selected_group_members;
+    var cache, create_category_list_item, create_group_complete_box, create_username_clickable_box, create_username_complete_box, currently_selected_users, deselect_user, dom_complete_box, dom_create_button, dom_group_name_box, dom_result, dom_selected_group_column, dom_selected_group_list, dom_selected_group_name, dom_selected_user_column, dom_selected_users_list, filter_selected_users, get_group_selection_class, get_username_selection_class, past_selected_users, refresh_gui, select_group, select_user, selected_group, selected_group_members, sorted;
     dom_complete_box = $("#username_input");
     dom_selected_users_list = $('#selected_users');
     dom_selected_user_column = $('#usercolumn');
@@ -41,14 +41,17 @@
       selected_group_members = group_members;
       return refresh_gui();
     };
+    sorted = function(usernames) {
+      return _.sortBy(usernames, function(uname) {
+        return uname.toUpperCase();
+      });
+    };
     refresh_gui = function() {
-      var username, users_to_show, _i, _j, _len, _len1;
+      var username, users_to_show, _i, _j, _len, _len1, _ref;
       dom_selected_users_list.empty();
       dom_selected_group_list.empty();
       users_to_show = _.union(currently_selected_users, past_selected_users);
-      users_to_show = _.sortBy(users_to_show, function(uname) {
-        return uname.toUpperCase();
-      });
+      users_to_show = sorted(users_to_show);
       if (users_to_show === []) {
         dom_selected_user_column.hide();
       } else {
@@ -62,8 +65,9 @@
         return dom_selected_group_column.hide();
       } else {
         dom_selected_group_name.text(selected_group);
-        for (_j = 0, _len1 = selected_group_members.length; _j < _len1; _j++) {
-          username = selected_group_members[_j];
+        _ref = sorted(selected_group_members);
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          username = _ref[_j];
           dom_selected_group_list.append(create_username_clickable_box(username));
         }
         return dom_selected_group_column.show();

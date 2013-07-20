@@ -36,13 +36,17 @@ $ ->
     refresh_gui()
 
 
+  sorted = (usernames) ->
+    return _.sortBy usernames, (uname) ->
+      return uname.toUpperCase()
+
+
   refresh_gui = ->
     dom_selected_users_list.empty()
     dom_selected_group_list.empty()
 
     users_to_show = _.union(currently_selected_users, past_selected_users)
-    users_to_show = _.sortBy users_to_show, (uname) ->
-      return uname.toUpperCase()
+    users_to_show = sorted(users_to_show)
 
     if users_to_show == []
       dom_selected_user_column.hide()
@@ -55,7 +59,7 @@ $ ->
       dom_selected_group_column.hide()
     else
       dom_selected_group_name.text(selected_group)
-      for username in selected_group_members
+      for username in sorted(selected_group_members)
         dom_selected_group_list.append(create_username_clickable_box(username))
       dom_selected_group_column.show()
 

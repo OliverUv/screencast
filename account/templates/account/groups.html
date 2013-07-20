@@ -14,9 +14,20 @@
         <p><em id="result"></em></p>
     </div>
 
-    <div class="row ui-widget">
-        <label for="username_input">Type usernames or groupnames you want to add here:</label>
-        <input id="username_input" size="50"/>
+    <div class="row">
+        <div class="ui-widget">
+            <div class="top_column">
+                <label for="username_input">Type usernames or groupnames you want to add here:</label>
+                <input id="username_input"/>
+            </div>
+        </div>
+        <div id="legend" class="top_column">
+            <ol id="legend_list" class="list">
+                <li><div class="all_selected_group legend_box"></div>All users selected / User selected</li>
+                <li><div class="none_selected_group legend_box"></div>No users selected / User not selected</li>
+                <li><div class="some_selected_group legend_box"></div>Some users selected</li>
+            </ol>
+        </div>
     </div>
 
     <div class="row">
@@ -25,10 +36,9 @@
             <ol id="selected_users" class="list"></ol>
         </div>
         <div id="groupcolumn" class="column" style="display:none;">
-            <h4>Users in group <span id="group_name">--no group selected--</span></h4>
+            <h4>Users in group <span id="group_name"></span></h4>
             <ol id="selected_group" class="list"></ol>
         </div>
     </div>
-
 </div>
 {% endblock %}
