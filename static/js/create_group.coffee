@@ -6,6 +6,8 @@ $ ->
   dom_selected_group_list = $('#selected_group')
   dom_selected_group_name = $('#group_name')
   dom_create_button = $('#create_group_button')
+  dom_select_all_button = $('#select_all_button')
+  dom_select_none_button = $('#select_none_button')
   dom_group_name_box = $('#groupnameinput')
   dom_result = $('#result')
 
@@ -16,10 +18,25 @@ $ ->
   cache = {}
 
 
+  select_users = (usernames) ->
+    for username in usernames
+      if username not in currently_selected_users
+        currently_selected_users.push(username)
+        past_selected_users.push(username)
+    refresh_gui()
+
+
   select_user = (username) ->
     return if username in currently_selected_users
     currently_selected_users.push(username)
     past_selected_users.push(username)
+    refresh_gui()
+
+
+  deselect_users = (usernames) ->
+    for username in usernames
+      if username in currently_selected_users
+        currently_selected_users.remove(username)
     refresh_gui()
 
 
@@ -98,7 +115,7 @@ $ ->
 
 
   create_username_clickable_box = (username) ->
-    box = $("<li class='#{get_username_selection_class(username)}'>#{username}</li>")
+    box = $("<li class='#{get_username_selection_class(username)} box_drop_shadow'>#{username}</li>")
     box.on 'click', ->
       if username in currently_selected_users
         deselect_user(username)
@@ -157,6 +174,14 @@ $ ->
       # Return false to inhibit insertion of the selected value
       # into the input field.
       return false
+
+
+  dom_select_all_button.on "click", ->
+    select_users(selected_group_members)
+
+  
+  dom_select_none_button.on "click", ->
+    deselect_users(selected_group_members)
 
 
   dom_create_button.on "click", ->

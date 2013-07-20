@@ -5,7 +5,10 @@
   -o-border-radius: 2px;
   border-radius: 2px;
   padding: 2px;
-  margin: 2px;
+  margin: 5px;
+}
+.box_drop_shadow {
+  box-shadow: 1px 1px 0px #585858, 2px 2px 0px #585858, 3px 3px 0px #585858;
 }
 .list {
   list-style-type: none;
@@ -20,7 +23,7 @@
   width: 42%;
   padding: 5px;
   float: left;
-  background-color: #b4b4b4;
+  background-color: #bcbcbc;
 }
 .top_column {
   min-height: 1px;
@@ -41,8 +44,8 @@
   -o-border-radius: 2px;
   border-radius: 2px;
   padding: 2px;
-  margin: 2px;
-  background-color: #78ff66;
+  margin: 5px;
+  background-color: #9aff8c;
 }
 .non_added_user {
   -webkit-border-radius: 2px;
@@ -51,7 +54,7 @@
   -o-border-radius: 2px;
   border-radius: 2px;
   padding: 2px;
-  margin: 2px;
+  margin: 5px;
   background-color: #ffffff;
 }
 .group_header {
@@ -65,8 +68,8 @@
   -o-border-radius: 2px;
   border-radius: 2px;
   padding: 2px;
-  margin: 2px;
-  background-color: #78ff66;
+  margin: 5px;
+  background-color: #9aff8c;
 }
 .some_selected_group {
   -webkit-border-radius: 2px;
@@ -75,8 +78,8 @@
   -o-border-radius: 2px;
   border-radius: 2px;
   padding: 2px;
-  margin: 2px;
-  background-color: #ffd070;
+  margin: 5px;
+  background-color: #ffd98c;
 }
 .none_selected_group {
   -webkit-border-radius: 2px;
@@ -85,7 +88,7 @@
   -o-border-radius: 2px;
   border-radius: 2px;
   padding: 2px;
-  margin: 2px;
+  margin: 5px;
   background-color: #ffffff;
 }
 .ui-autocomplete-category {
@@ -93,7 +96,21 @@
   margin: .8em 0 .2em;
   line-height: 1.5;
   font-weight: bold;
-  background-color: #b4b4b4;
+  background-color: #bcbcbc;
+}
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus {
+  background: none !important;
+  border: 2px solid #444 !important;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -ms-border-radius: 0px;
+  -o-border-radius: 0px;
+  border-radius: 0px;
 }
 .legend_box {
   height: 10px;
@@ -101,10 +118,23 @@
   margin-right: 10px;
   float: left;
   display: inline;
-  border-color: #b4b4b4;
-  border-style: solid;
-  border-width: 2px;
+  box-shadow: 0px 0px 45px #bcbcbc, 1px 1px 0px #bcbcbc, 2px 2px 0px #bcbcbc, 3px 3px 0px #bcbcbc;
   margin-top: 0px;
+}
+.select_button {
+  background-color: #F2FFF2;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
+  border-radius: 2px;
+  border: 1px solid #585858;
+  color: #000;
+  cursor: pointer;
+  margin: 5px 10px 5px auto;
+  padding: 5px;
+  width: 5em;
+  text-align: center;
 }
 #legend_list li {
   padding-bottom: 7px;

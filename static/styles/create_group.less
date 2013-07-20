@@ -1,7 +1,8 @@
-@selected_color: #78FF66;
-@some_selected_color: #FFD070;
+@selected_color: #9AFF8C;
+@some_selected_color: #FFD98C;
 @non_selected_color: #fff;
-@background_gray: #b4b4b4;
+@background_gray: #bcbcbc;
+@dark_shadow: #585858;
 
 .rounded-corners(@radius: 2px) {
     -webkit-border-radius: @radius;
@@ -13,7 +14,13 @@
 .box {
     .rounded-corners;
     padding: 2px;
-    margin: 2px;
+    margin: 5px;
+}
+.box_drop_shadow {
+    box-shadow:
+        1px 1px 0px @dark_shadow,
+        2px 2px 0px @dark_shadow,
+        3px 3px 0px @dark_shadow;
 }
 .list {
     list-style-type: none;
@@ -74,16 +81,44 @@
     font-weight: bold;
     background-color: @background_gray;
 }
+
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus {
+    background: none !important;  // Disable the ugly jquery-ui active background
+    // border: none !important;
+    border: 2px solid #444 !important;
+    .rounded-corners(0px);
+}
 .legend_box {
     height: 10px;
     width: 10px;
     margin-right: 10px;
     float: left;
     display: inline;
-    border-color: @background_gray;
-    border-style: solid;
-    border-width: 2px;
+    // border-color: @background_gray;
+    // border-style: solid;
+    // border-width: 2px;
+    box-shadow:
+        0px 0px 45px @background_gray,
+        1px 1px 0px @background_gray,
+        2px 2px 0px @background_gray,
+        3px 3px 0px @background_gray;
     margin-top: 0px;
+}
+.select_button {
+    background-color: #F2FFF2;
+    .rounded-corners;
+    border: 1px solid @dark_shadow;
+    color: #000;
+    cursor: pointer;
+    margin: 5px 10px 5px auto;
+    padding: 5px;
+    width: 5em;
+    text-align: center;
 }
 #legend_list li {
     padding-bottom: 7px;

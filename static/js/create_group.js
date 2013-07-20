@@ -3,7 +3,7 @@
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   $(function() {
-    var cache, create_category_list_item, create_group_complete_box, create_username_clickable_box, create_username_complete_box, currently_selected_users, deselect_user, dom_complete_box, dom_create_button, dom_group_name_box, dom_result, dom_selected_group_column, dom_selected_group_list, dom_selected_group_name, dom_selected_user_column, dom_selected_users_list, filter_selected_users, get_group_selection_class, get_username_selection_class, past_selected_users, refresh_gui, select_group, select_user, selected_group, selected_group_members, sorted;
+    var cache, create_category_list_item, create_group_complete_box, create_username_clickable_box, create_username_complete_box, currently_selected_users, deselect_user, deselect_users, dom_complete_box, dom_create_button, dom_group_name_box, dom_result, dom_select_all_button, dom_select_none_button, dom_selected_group_column, dom_selected_group_list, dom_selected_group_name, dom_selected_user_column, dom_selected_users_list, filter_selected_users, get_group_selection_class, get_username_selection_class, past_selected_users, refresh_gui, select_group, select_user, select_users, selected_group, selected_group_members, sorted;
     dom_complete_box = $("#username_input");
     dom_selected_users_list = $('#selected_users');
     dom_selected_user_column = $('#usercolumn');
@@ -11,6 +11,8 @@
     dom_selected_group_list = $('#selected_group');
     dom_selected_group_name = $('#group_name');
     dom_create_button = $('#create_group_button');
+    dom_select_all_button = $('#select_all_button');
+    dom_select_none_button = $('#select_none_button');
     dom_group_name_box = $('#groupnameinput');
     dom_result = $('#result');
     currently_selected_users = [];
@@ -18,12 +20,33 @@
     selected_group = '';
     selected_group_members = [];
     cache = {};
+    select_users = function(usernames) {
+      var username, _i, _len;
+      for (_i = 0, _len = usernames.length; _i < _len; _i++) {
+        username = usernames[_i];
+        if (__indexOf.call(currently_selected_users, username) < 0) {
+          currently_selected_users.push(username);
+          past_selected_users.push(username);
+        }
+      }
+      return refresh_gui();
+    };
     select_user = function(username) {
       if (__indexOf.call(currently_selected_users, username) >= 0) {
         return;
       }
       currently_selected_users.push(username);
       past_selected_users.push(username);
+      return refresh_gui();
+    };
+    deselect_users = function(usernames) {
+      var username, _i, _len;
+      for (_i = 0, _len = usernames.length; _i < _len; _i++) {
+        username = usernames[_i];
+        if (__indexOf.call(currently_selected_users, username) >= 0) {
+          currently_selected_users.remove(username);
+        }
+      }
       return refresh_gui();
     };
     deselect_user = function(username) {
@@ -110,7 +133,7 @@
     };
     create_username_clickable_box = function(username) {
       var box;
-      box = $("<li class='" + (get_username_selection_class(username)) + "'>" + username + "</li>");
+      box = $("<li class='" + (get_username_selection_class(username)) + " box_drop_shadow'>" + username + "</li>");
       return box.on('click', function() {
         if (__indexOf.call(currently_selected_users, username) >= 0) {
           return deselect_user(username);
@@ -179,6 +202,12 @@
         dom_complete_box.val('');
         return false;
       }
+    });
+    dom_select_all_button.on("click", function() {
+      return select_users(selected_group_members);
+    });
+    dom_select_none_button.on("click", function() {
+      return deselect_users(selected_group_members);
     });
     return dom_create_button.on("click", function() {
       var group_name;
