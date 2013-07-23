@@ -3,7 +3,6 @@
 
 {% block head %}
     <link rel="stylesheet" href="{{ STATIC_URL }}videostyle.css">
-    <script type="text/javascript" src="{{ STATIC_URL }}js/playvideos.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/my_files.js"></script>
 {% endblock %}
 
@@ -28,7 +27,10 @@
 <p>Created: </p>
 <ul id="resourcelist" class="cleanlist">
 {% for resource in created_resources %}
-<li> <span class ="videolink" id={{ resource.disp_name }}>{{ resource.disp_name }}</span> - <span class="editbutton"><i class='icon-pencil'></i></span></li>
+<li> <span>{{ resource.disp_name }}</span>
+    <span class="editbutton"><i class='icon-pencil'></i></span>
+    <span class="removebutton"><i class='icon-remove'></i></span>
+    <span class ="videolink" id={{ resource.disp_name }}><i class="icon-play"></i><span></li>
 {% endfor %}
 </ul>
 
@@ -38,4 +40,6 @@
     <li> <span class ="videolink" id={{ resource.disp_name }}>{{ resource.disp_name }}</span> - &#9658;</li>
 {% endfor %}
 </ul>
+
+<ul id='result' class='unstyled'></ul>
 {% endblock %}

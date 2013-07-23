@@ -8,6 +8,7 @@ urlpatterns = patterns(
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^my_files/$', views.my_files, name='my_files'),
     url(r'^my_files/change_name/$', views.change_name, name='change_name'),
+    url(r'^my_files/remove_resource/$', views.remove_resource, name='remove_resource'),
     url(r'^upload/$', views.upload, name='upload'),
     url(r'^groups/$', views.groups, name='groups'),
     url(r'^profile/share/$', views.share, name='share'),

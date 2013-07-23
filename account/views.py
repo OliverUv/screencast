@@ -65,6 +65,25 @@ def change_name(request):
             resource.save()
             res = request.POST['newname']
         except ObjectDoesNotExist:
+            #TODO: Force ajax error (will now return as sucessfull)?
+            err = 'Object does not exist'
+            res = request.POST['filename']
+    else:
+        res = ''
+        err = 'Not a POST'
+    result = json.dumps({'response': res, 'error': err})
+    return HttpResponse(result, mimetype='text/json')
+
+@login_required
+def remove_resource(request):
+    res = ''
+    err = ''
+    if request.method == 'POST':
+        try:
+            Resource.objects.get(disp_name=request.POST['filename']).delete()
+            res = request.POST['filename']+' sucessfully deleted'
+        except ObjectDoesNotExist:
+            #TODO: Force ajax error (will now return as sucessfull)?
             err = 'Object does not exist'
             res = request.POST['filename']
     else:
