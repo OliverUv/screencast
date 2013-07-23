@@ -10,7 +10,11 @@ It is recommended that you use a virtualenv when installing the prerequisites. A
 prerequisites can be found in requirements.txt, you can install them easily by running
 `pip install -r requirements.txt`
 
-### Configure in `screencast/local_settings.py`
+### Configure `screencast/local_settings.py`
+
+Copy the file `screencast/local_settings_template.py` to `screencast/local_settings.py`
+and change the paths and settings so that they fit into your system setup. The following
+things must be changed:
 
  -  Database info
  -  Template dirs

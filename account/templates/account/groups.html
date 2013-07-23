@@ -1,34 +1,46 @@
 {% extends "base.html" %}
 {% block head %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/creategroup.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/create_group.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}styles/create_group.css">
 {% endblock %}
 {% block tab4 %}active{% endblock %}
 
 {% block main %}
 <div class='mainContainer'>
-    <p> Select users and/or groups:</p>
-    <ol id="userlist" class="cleanlist">
-        {% for user in users %}
-            <li class="user">{{ user.username }}</li>
-        {% endfor %}
-        {% for group in groups %}
-        <li class="group"><span class="viewbutton">[+]</span><span class="switchbutton">{{ group.name }}</span></li>
-        {% endfor %}
-    </ol>
-
-    <div id="groupview">
-        <p></p>
-        <ul>
-        </ul>
+    <div class="row">
+        <label for="groupnameinput">Name your group:</label>
+        <input type="text" id="groupnameinput" placeholder="Name.."/>
+        <p id="create_group_button" class="actionbutton">Create</p>
+        <p><em id="result"></em></p>
     </div>
 
-    <ol id="grouplist" class="cleanlist">
-        <li>Included:</li>
-    </ol>
+    <div class="row">
+        <div class="ui-widget">
+            <div class="top_column">
+                <label for="username_input">Type usernames or groupnames you want to add here:</label>
+                <input id="username_input"/>
+            </div>
+        </div>
+        <div id="legend" class="top_column">
+            <ol id="legend_list" class="list">
+                <li><div class="all_selected_group legend_box"></div>All users selected / User selected</li>
+                <li><div class="none_selected_group legend_box"></div>No users selected / User not selected</li>
+                <li><div class="some_selected_group legend_box"></div>Some users selected</li>
+            </ol>
+        </div>
+    </div>
 
-    Name your group:<input type="text" id="groupnameinput" placeholder="Name.."><br>
-    <p id="groupbutton" class="actionbutton">Create</p>
-    <p><i id="result"></i></p>
+    <div class="row">
+        <div id="usercolumn" class="column" style="display:none;">
+            <h4>Selected users</h4>
+            <ol id="selected_users" class="list"></ol>
+        </div>
+        <div id="groupcolumn" class="column" style="display:none;">
+            <h4>Users in group <span id="group_name"></span></h4>
+            <ol id="selected_group" class="list"></ol>
+            <div id="select_all_button" class="select_button">Select all</div>
+            <div id="select_none_button" class="select_button">Select none</div>
+        </div>
+    </div>
 </div>
 {% endblock %}
-
