@@ -40,19 +40,38 @@ def profile(request):
 
 
 @login_required
-def browse(request):
+def my_files(request):
     user = request.user
     created = Resource.objects.filter(key=user)
     # Get intersection from created and owned resources
     resources = get_objects_for_user(User.objects.get(username=user.username), 'account.view_resource').exclude(key=user)
+    #TODO: Only send resource display names instead of objects
     context = Context({
         'shared_resource': resources,
         'created_resources': created,
         'thisuser': user,
     })
 
-    return render(request, 'account/browse.html', context)
+    return render(request, 'account/my_files.html', context)
 
+@login_required
+def change_name(request):
+    res = ''
+    err = ''
+    if request.method == 'POST':
+        try:
+            resource = Resource.objects.get(disp_name=request.POST['filename'])
+            resource.disp_name = request.POST['newname']
+            resource.save()
+            res = request.POST['newname']
+        except ObjectDoesNotExist:
+            err = 'Object does not exist'
+            res = request.POST['filename']
+    else:
+        res = ''
+        err = 'Not a POST'
+    result = json.dumps({'response': res, 'error': err})
+    return HttpResponse(result, mimetype='text/json')
 
 @login_required
 def groups(request):
@@ -70,7 +89,7 @@ def groups(request):
 
 @login_required
 def upload(request):
-    resource, c = Resource.objects.get_or_create(key=request.user, filename=request.POST['resource'])
+    resource, c = Resource.objects.get_or_create(key=request.user, filename=request.POST['resource'], disp_name=request.POST['resource'])
     assign('modify_resource', request.user, resource)
     assign('view_resource', request.user, resource)
 
@@ -86,7 +105,8 @@ def upload(request):
 
     return render(request, 'account/upload.html', context)
 
-
+    result = json.dumps({"users": users, "message": message})
+    return HttpResponse(result, mimetype='text/json')
 @ensure_post
 @login_required
 def create_group(request):

@@ -5,6 +5,8 @@
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.form.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
+        {% load bootstrap_toolkit %}
+        {% bootstrap_stylesheet_tag %}
         {% block head %}
         {% endblock %}
     </head>
@@ -14,7 +16,7 @@
         <ul>
             <li class="{% block tab1 %}inactive{% endblock %}"><a href="{% url 'account:index' %}">Index</a></li>
             <li class="{% block tab2 %}inactive{% endblock %}"><a href="{% url 'account:profile' %}">Profile</a></li>
-            <li class="{% block tab3 %}inactive{% endblock %}"><a href="{% url 'account:browse' %}">Browse</a></li>
+            <li class="{% block tab3 %}inactive{% endblock %}"><a href="{% url 'account:my_files' %}">My files</a></li>
             <li class="{% block tab4 %}inactive{% endblock %}"><a href="{% url 'account:groups' %}">Groups</a></li>
             <li class="{% block tab5 %}inactive{% endblock %}"><a href="{% url 'account:launch_applet' %}">Applet</a></li>
         </ul>

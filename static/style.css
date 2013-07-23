@@ -117,6 +117,8 @@ background-color: #0772A1;
     font-weight: bold;
     color: #00CC00;
 }
+
+/* Video CSS */
 #video-container {
 	width: 640px;
 	height: 365px;
@@ -175,6 +177,8 @@ button:hover {
 #volume-bar {
 	width: 60px;
 }
+/* End Video CSS*/
+
 .actionbutton{
     background-color: #00CC00;
     color: #fff;
@@ -203,3 +207,11 @@ button:hover {
     margin-left: 200px;
 }
 
+/* My files */
+.videolink{
+    cursor: pointer;
+}
+
+#rbox {
+    width: 80px;
+}

@@ -1,6 +1,9 @@
 Django==1.5.1
 argparse==1.2.1
+django-bootstrap-toolkit==2.15.0
 django-cas==2.0.3
 django-guardian==1.1.0.beta
+django-less==0.7.1
+nodeenv==0.6.6
+pytz==2013b
 wsgiref==0.1.2
-pytz=2013b

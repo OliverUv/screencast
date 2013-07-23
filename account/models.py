@@ -32,6 +32,8 @@ class Resource(models.Model):
     # Screencast files, audio tracks, etc.
     key = models.ForeignKey(User)
     filename = models.CharField(max_length=200)
+    disp_name = models.CharField(max_length=200)
+    upload_date = models.CharField(max_length=10)
 
     def __unicode__(self):
         return self.filename

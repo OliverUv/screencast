@@ -4,6 +4,7 @@
 {% block head %}
     <link rel="stylesheet" href="{{ STATIC_URL }}videostyle.css">
     <script type="text/javascript" src="{{ STATIC_URL }}js/playvideos.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/my_files.js"></script>
 {% endblock %}
 
 {% block main %}
@@ -24,24 +25,17 @@
     </div>
     -->
 </div>
+<p>Created: </p>
+<ul id="resourcelist" class="cleanlist">
+{% for resource in created_resources %}
+<li> <span class ="videolink" id={{ resource.disp_name }}>{{ resource.disp_name }}</span> - <span class="editbutton"><i class='icon-pencil'></i></span></li>
+{% endfor %}
+</ul>
 
-<div id="sidebysidelist">
-    <div id="left-col">
-        <p>Created: </p>
-        <ul id="left-col">
-        {% for resource in created_resources %}
-        <li class="videolink" id={{ resource.filename }}> {{ resource.filename }} -- Belongs to {{resource.key.username}} &#9658;</li>
-        {% endfor %}
-        </ul>
-    </div>
-
-    <div id="right-col">
-        <p>Shared from other users: </p>
-        <ul>
-        {% for resource in shared_resource %}
-        <li class="videolink" id={{ resource.filename }}> {{ resource.filename }} -- Belongs to {{resource.key.username}} &#9658;</li>
-        {% endfor %}
-        </ul>
-    </div>
-</div>
+<p>Shared from other users: </p>
+<ul>
+{% for resource in shared_resource %}
+    <li> <span class ="videolink" id={{ resource.disp_name }}>{{ resource.disp_name }}</span> - &#9658;</li>
+{% endfor %}
+</ul>
 {% endblock %}
