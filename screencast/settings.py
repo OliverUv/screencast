@@ -68,6 +68,11 @@ STATICFILES_FINDERS = (
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
+# Bootstrap path
+BOOTSTRAP_BASE_URL = STATIC_URL+'bootstrap/'
+BOOTSTRAP_JS_URL = 'bootstrap.js'
+BOOTSTRAP_CSS_BASE_URL = BOOTSTRAP_BASE_URL
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'pq@81sak$90cff)^-y1602imd-4@0u7pb@^+yejp3zj^%%%y%o'
 

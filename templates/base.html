@@ -2,14 +2,14 @@
     <head>
         <title>{% block title %}Screencast{% endblock %}</title>
         <link rel="stylesheet" href="{{ STATIC_URL }}styles/global.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/bootstrap.css">
         <link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
         <script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.form.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/underscore.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
-        {% load bootstrap_toolkit %}
-        {% bootstrap_stylesheet_tag %}
+
         {% block head %}
         {% endblock %}
     </head>

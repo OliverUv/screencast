@@ -3,6 +3,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="{{ STATIC_URL }}videostyle.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}styles/my_files.css">
     <script type="text/javascript" src="{{ STATIC_URL }}js/my_files.js"></script>
 {% endblock %}
 
@@ -15,6 +16,7 @@
         </p>
         </video>
     <!-- Video Controls 
+    list-style-type: none;
     <div id="video-controls">
         <button type="button" id="play-pause" class="play">Play</button>
         <input type="range" id="seek-bar" value="0">
@@ -24,22 +26,38 @@
     </div>
     -->
 </div>
-<p>Created: </p>
-<ul id="resourcelist" class="cleanlist">
-{% for resource in created_resources %}
-<li> <span>{{ resource.disp_name }}</span>
-    <span class="editbutton"><i class='icon-pencil'></i></span>
-    <span class="removebutton"><i class='icon-remove'></i></span>
-    <span class ="videolink" id={{ resource.disp_name }}><i class="icon-play"></i><span></li>
-{% endfor %}
-</ul>
 
-<p>Shared from other users: </p>
-<ul>
-{% for resource in shared_resource %}
-    <li> <span class ="videolink" id={{ resource.disp_name }}>{{ resource.disp_name }}</span> - &#9658;</li>
-{% endfor %}
-</ul>
+<div class='videolist-menu'>
+    <input type='text' name='search' placeholder='Search..'>
+    <i class='icon-search'></i>
+    <span style='margin-right:10px;'></span>
+    <div class='btn-group'>
+        <div class='btn btn-small btn-primary' >My uploads</div>
+        <div class='btn btn-small btn-primary' >Shared uploads</div>
+    </div>
+</div>
 
-<ul id='result' class='unstyled'></ul>
+<div id='videolist-container'>
+    <ul id="resourcelist" class="unstyled">
+    {% for resource in created_resources %}
+        <li>
+            <div class='row-fluid'>
+                <div class='span2'>
+                    <a href='#' class='thumbnails'>
+                        <img src='{{ STATIC_URL }}media/scast.png' class='thumbnail'></img>
+                    </a>
+                </div>
+                <div class='span4'>
+                    <div class='link-container'>
+                        <span class='videolink'>{{ resource.disp_name }}</span>
+                        <span class="editbutton"><i class='icon-pencil'></i></span>
+                        <span class="removebutton"><i class='icon-remove'></i></span>
+                    </div>
+                    <div class='timestamp'>Added {{ resource.creation_timestamp|timesince }} ago</div>
+                <div>
+            </div>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
 {% endblock %}

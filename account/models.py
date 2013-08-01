@@ -34,6 +34,7 @@ class Resource(models.Model):
     filename = models.CharField(max_length=200)
     disp_name = models.CharField(max_length=200)
     upload_date = models.CharField(max_length=10)
+    creation_timestamp = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return self.filename

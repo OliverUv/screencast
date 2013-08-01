@@ -1,3 +1,6 @@
+.main{
+    margin:1%;
+}
 /* Navigation bar */
 #navbar ul { 
     margin: 0; 
@@ -5,11 +8,13 @@
     list-style-type: none; 
     text-align: left; 
     background-color: #0772A1; 
-    width: 70%;
+    width: 100%;
 }
 
 #navbar ul li { 
-    display: inline; /* Needed to create horizontal effect */ 
+    display: inline; 
+    margin: 20px;
+    font-size: 15px;
 }
 
 #navbar ul li a { 
@@ -76,6 +81,7 @@
     width: 50%;
     height: 400px;
 }
+
 .user{
     cursor: pointer;
     color: #39AECF;
@@ -207,19 +213,3 @@ button:hover {
     margin-left: 200px;
 }
 
-/* My files */
-.videolink{
-    cursor: pointer;
-}
-
-.editbutton{
-    cursor:pointer;
-}
-
-#rbox {
-    width: 80px;
-}
-
-#result {
-   font-style: italic; 
-}

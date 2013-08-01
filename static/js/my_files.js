@@ -2,6 +2,15 @@
 (function() {
   $(function() {
     var currentFilename, edit, remove;
+    $('.btn-group > .btn').click(function() {
+      var toggle;
+      toggle = 'btn-primary';
+      if ($(this).hasClass(toggle)) {
+        return $(this).removeClass(toggle);
+      } else {
+        return $(this).addClass(toggle);
+      }
+    });
     currentFilename = '';
     edit = function() {
       var fname, vlink;
@@ -9,11 +18,11 @@
       fname = vlink.html();
       if (fname.substring(0, 6) !== "<input") {
         currentFilename = fname;
-        return vlink.html('<input type="text" id="rbox" autofocus="true" placeholder="' + fname + '">');
+        return vlink.html('<input type="text" class="editbox" autofocus="true" placeholder="' + fname + '">');
       }
     };
     $('.editbutton').click(edit);
-    $(document).on('keypress', 'input', function(event) {
+    $(document).on('keypress', '.editbox', function(event) {
       var $target;
       if (event.which === 13 || event.keycode === 13) {
         $target = $(this).parent();
@@ -39,7 +48,7 @@
       var fname, target;
       target = $(this).parent();
       fname = target.children('.videolink').html();
-      target.remove();
+      target.parent().parent().remove();
       return $.ajax({
         url: 'remove_resource/',
         type: 'POST',

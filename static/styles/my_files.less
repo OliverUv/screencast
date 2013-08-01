@@ -1,0 +1,136 @@
+@primary_color: #0772A1;
+@primary_color_dark: #0775A1;
+@linkcolor: @primary_color;
+@black: #000;
+@main_body_width: 40%;
+@list-margin: 10px;
+@menu-spacing: 20px;
+@search_width: 150px;
+@search_height: 26px;
+@thumbnail_size: 80px;
+@link_size: 16px;
+
+.videolist-menu {
+    input {
+        margin-bottom: 0px;        /* Align to button group */
+        height: @search_height;
+        width: @search_width;
+        .searchbox;
+    }
+}
+
+.searchbox{
+    font-weight: bold;
+    color: #000;
+}
+
+#resourcelist {
+    padding: 0;
+    margin: 0;
+    padding-top: 20px;
+
+    li {
+        margin: 0;
+    }
+}
+
+#resourcesublist li {
+    margin: 0px;
+    padding: 0px;
+}
+
+#resourcelist-picture-text li {
+    margin:0;
+    padding:0;
+}
+
+.thumbnail {
+    max-height: @thumbnail_size; 
+}
+
+
+#videolist-container {
+
+    width: @main_body_width;
+}
+
+.link {
+    color: @linkcolor; 
+    font-weight: bold;
+    font-size: @link_size;
+}
+
+.videolink {
+    cursor: pointer;
+    height: 20px;
+    .link;
+}
+
+.link-container{
+    height: 20px;
+}
+
+.timestamp {
+    font-weight: italic;
+    font-size: 10px;
+}
+
+.editbutton {
+    cursor:pointer;
+}
+
+input.editbox{
+    width: 80px;
+    margin-bottom: 0px !important;
+    padding: 0px !important;
+    outline: none;
+    border: none !important;
+    box-shadow: none !important;
+    height: @link_size + 2; /* To fix the cutoff from letter g and j add 2 pixels */
+    margin: 0px !important;
+    vertical-align: baseline;
+    .link;
+    color: #ff0000;
+}
+
+input.editbox:focus{
+    margin: 0px !important;
+    vertical-align: baseline;
+    .link;
+}
+
+/*
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+    margin: 0px !important;
+    vertical-align: baseline;
+    margin-bottom: 0px !important;
+    padding: 0px !important;
+    line-height: @link_size;
+    height: @link_size;
+.btn-primary {
+  .buttonBackground(@yourColor, @yourColorDarker);
+}}
+
+input:-moz-placeholder, textarea:-moz-placeholder {
+    margin: 0px !important;
+    vertical-align: baseline;
+    margin-bottom: 0px !important;
+    padding: 0px !important;
+    line-height: @link_size;
+    height: @link_size;
+}
+
+input:-ms-input-placeholder {
+    margin: 0px !important;
+    vertical-align: baseline;
+    margin-bottom: 0px !important;
+    padding: 0px !important;
+    line-height: @link_size;
+    height: @link_size;
+}
+*/
+
+/* Bootstrap overrides */
+.btn-primary {
+  /*.buttonBackground(@primary_color, @primary_color); */
+}

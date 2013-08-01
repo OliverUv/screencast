@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="/home/albin/Dropbox/ida/env/screencast/static">
+<!-- href="screencast_webstart.jnlp"-->
+    <information>
+        <title>Screencast recorder</title>
+        <vendor>IDA</vendor>
+        <offline-allowed/>
+    </information>
+    <resources>
+        <!-- Application Resources -->
+        <j2se version="1.6+" href=
+           "http://java.sun.com/products/autodl/j2se"/>
+        <jar href="applet/twSClient.jar" main="true" />
+    </resources>
+    <security>
+        <all-permissions/>
+    </security>
+    <application-desc
+         name="Screencast recorder"
+         main-class="se.liu.screencast.twsclient.Main"
+         width="300"
+         height="300">
+     </application-desc>
+     <update check="background"/>
+</jnlp>    
