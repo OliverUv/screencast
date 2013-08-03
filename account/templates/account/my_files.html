@@ -32,15 +32,20 @@
     <i class='icon-search'></i>
     <span style='margin-right:10px;'></span>
     <div class='btn-group'>
-        <div class='btn btn-small btn-primary' >My uploads</div>
-        <div class='btn btn-small btn-primary' >Shared uploads</div>
+        <div id='created_btn' class='btn btn-small btn-primary' >My uploads</div>
+        <div id='shared_btn' class='btn btn-small btn-primary' >Shared uploads</div>
     </div>
 </div>
 
 <div id='videolist-container'>
     <ul id="resourcelist" class="unstyled">
-    {% for resource in created_resources %}
-        <li>
+    {% for resource in resources %}
+        {% if resource.is_shared %}
+            <li class='shared_resource'>
+        {% else %}
+            <li class='created_resource'>
+        {% endif %}
+            <div class='resource_storage'>{{ resource.disp_name }}#{{ resource.is_shared }}</div>
             <div class='row-fluid'>
                 <div class='span2'>
                     <a href='#' class='thumbnails'>
@@ -60,4 +65,5 @@
     {% endfor %}
     </ul>
 </div>
+
 {% endblock %}

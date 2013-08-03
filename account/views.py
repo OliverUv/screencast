@@ -42,16 +42,20 @@ def profile(request):
 @login_required
 def my_files(request):
     user = request.user
-    created = Resource.objects.filter(key=user)
     # Get intersection from created and owned resources
-    resources = get_objects_for_user(User.objects.get(username=user.username), 'account.view_resource').exclude(key=user)
-    #TODO: Only send resource display names instead of objects
-    context = Context({
-        'shared_resource': resources,
-        'created_resources': created,
-        'thisuser': user,
-    })
+    shared_resources = get_objects_for_user(User.objects.get(username=user.username), 'account.view_resource').exclude(key=user)
+    # Get all resources for user
+    owned_resources = get_objects_for_user(User.objects.get(username=user.username), 'account.view_resource').order_by('upload_date')
+    # Mark the resources shared by other users
+    for resource in owned_resources:
+        if resource in shared_resources:
+            resource.is_shared = True
+        else:
+            resource.is_shared = False
 
+    context = RequestContext(request, {
+        'resources': owned_resources,
+    })
     return render(request, 'account/my_files.html', context)
 
 @login_required

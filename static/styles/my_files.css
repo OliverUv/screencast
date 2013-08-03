@@ -19,6 +19,9 @@
 #resourcelist li {
   margin: 0;
 }
+.resource_storage {
+  display: none;
+}
 #resourcesublist li {
   margin: 0px;
   padding: 0px;
@@ -78,39 +81,4 @@ input.editbox:focus {
   color: #0772a1;
   font-weight: bold;
   font-size: 16px;
-}
-/*
-input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
-    margin: 0px !important;
-    vertical-align: baseline;
-    margin-bottom: 0px !important;
-    padding: 0px !important;
-    line-height: @link_size;
-    height: @link_size;
-.btn-primary {
-  .buttonBackground(@yourColor, @yourColorDarker);
-}}
-
-input:-moz-placeholder, textarea:-moz-placeholder {
-    margin: 0px !important;
-    vertical-align: baseline;
-    margin-bottom: 0px !important;
-    padding: 0px !important;
-    line-height: @link_size;
-    height: @link_size;
-}
-
-input:-ms-input-placeholder {
-    margin: 0px !important;
-    vertical-align: baseline;
-    margin-bottom: 0px !important;
-    padding: 0px !important;
-    line-height: @link_size;
-    height: @link_size;
-}
-*/
-/* Bootstrap overrides */
-.btn-primary {
-  /*.buttonBackground(@primary_color, @primary_color); */
-
 }

@@ -1,13 +1,35 @@
 $ ->
-  #Menu 
+
+  #Get resources from template
+  resources = []
+
+  #Loop through hidden divs to load the resources for this user
+  load_resources = () ->
+    $('#resourcelist > li').each(() ->
+      # Data stored as: is_shared#filename
+      parsed = $(this).children('div').html().split('#')
+      resources.push(parsed[1])
+    )
+  load_resources()
+
+  #Toggle filter buttons
   $('.btn-group > .btn').click(->
     #Change this to fit your button
     toggle = 'btn-primary'
 
     if $(this).hasClass(toggle)
       $(this).removeClass(toggle)
+
+      if $(this).attr('id') == 'created_btn'
+        $('.created_resource').hide()
+      else
+        $('.shared_resource').hide()
     else
       $(this).addClass(toggle)
+      if $(this).attr('id') == 'created_btn'
+        $('.created_resource').show()
+      else
+        $('.shared_resource').show()
   )
 
   #Edit resource
