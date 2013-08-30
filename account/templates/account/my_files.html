@@ -28,7 +28,7 @@
 </div>
 
 <div class='videolist-menu'>
-    <input type='text' name='search' placeholder='Search..'>
+    <input type='text' id='searchfield' placeholder='Search..'>
     <i class='icon-search'></i>
     <span style='margin-right:10px;'></span>
     <div class='btn-group'>
@@ -41,11 +41,11 @@
     <ul id="resourcelist" class="unstyled">
     {% for resource in resources %}
         {% if resource.is_shared %}
-            <li class='shared_resource'>
+            <li id='{{resource.disp_name}}'class='shared_resource'>
         {% else %}
-            <li class='created_resource'>
+            <li id='{{resource.disp_name}}'class='created_resource'>
         {% endif %}
-            <div class='resource_storage'>{{ resource.disp_name }}#{{ resource.is_shared }}</div>
+            <div class='resource_storage'>{{ resource.disp_name }}</div>
             <div class='row-fluid'>
                 <div class='span2'>
                     <a href='#' class='thumbnails'>
