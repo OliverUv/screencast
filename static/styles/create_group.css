@@ -142,3 +142,13 @@
 #username_input {
   width: 100%;
 }
+/*TODO: Make global */
+#groupnameinput {
+  margin-bottom: 0px;
+  /* Align to button group */
+
+  height: 26px;
+  width: 150px;
+  font-weight: bold;
+  color: #000;
+}
