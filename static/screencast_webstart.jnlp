@@ -10,6 +10,8 @@
         <j2se version="1.6+" href=
            "http://java.sun.com/products/autodl/j2se"/>
         <jar href="applet/twSClient.jar" main="true" />
+        <jar href="applet/jna-3.5.1.jar" main="false" />
+        <jar href="applet/platform-3.5.1.jar" main="false" />
     </resources>
     <security>
         <all-permissions/>
@@ -18,7 +20,7 @@
          name="Screencast recorder"
          main-class="se.liu.screencast.twsclient.Main"
          width="1000"
-         height="700">
+         height="500">
      </applet-desc>
      <update check="background"/>
 </jnlp>    

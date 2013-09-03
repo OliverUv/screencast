@@ -6,7 +6,7 @@
       code: 'se.liu.screencast.twsclient.Main',
       archive: "" + window.static_url + "applet/twSClient.jar",
       width: 1000,
-      height: 700
+      height: 500
     };
     parameters = {
       jnlp_href: "" + window.static_url + "screencast_webstart.jnlp"
