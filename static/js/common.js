@@ -83,6 +83,11 @@ function sameOrigin(url) {
     !(/^(\/\/|http:|https:).*/.test(url));
 }
 
+function errorMessage(data) {
+  response = $.parseJSON(data.responseText);
+  return response.message;
+}
+
 $.ajaxSetup({
   traditional: true,
   beforeSend: function(xhr, settings) {
