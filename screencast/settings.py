@@ -1,3 +1,5 @@
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+
 # Django settings for screencast project.
 
 DEBUG = True
@@ -69,7 +71,7 @@ STATICFILES_FINDERS = (
 )
 
 # Bootstrap path
-BOOTSTRAP_BASE_URL = STATIC_URL+'bootstrap/'
+BOOTSTRAP_BASE_URL = STATIC_URL + 'bootstrap/'
 BOOTSTRAP_JS_URL = 'bootstrap.js'
 BOOTSTRAP_CSS_BASE_URL = BOOTSTRAP_BASE_URL
 
@@ -81,6 +83,11 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
     # 'django.template.loaders.eggs.Loader',
+)
+
+# Adding template context processors here
+TEMPLATE_CONTEXT_PROCESSORS = TCP + (
+    'django.core.context_processors.request',
 )
 
 MIDDLEWARE_CLASSES = (

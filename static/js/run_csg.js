@@ -9,7 +9,8 @@
       height: 500
     };
     parameters = {
-      jnlp_href: "" + window.static_url + "screencast_webstart.jnlp"
+      jnlp_href: "" + window.static_url + "screencast_webstart.jnlp",
+      username: window.username
     };
     return $('#launch_app').click(function() {
       return deployJava.runApplet(attributes, parameters, '1.7.0');

@@ -11,6 +11,7 @@ $ ->
     # static things. Might want to generate it in django
     # to resolve that.
     jnlp_href: "#{window.static_url}screencast_webstart.jnlp"
+    username: window.username
   }
   $('#launch_app').click ->
     deployJava.runApplet(attributes, parameters, '1.7.0')
