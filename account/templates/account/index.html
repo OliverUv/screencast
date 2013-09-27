@@ -2,6 +2,7 @@
 {% block tab1 %}active{% endblock %}
 
 {% block main %}
+
 <form name="input" action="{% url 'account:upload' %}" method="post">
 {% csrf_token %} 
 Choose a file: <input type="text" name="resource" placeholder="Filename.." autofocus>

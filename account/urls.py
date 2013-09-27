@@ -3,12 +3,13 @@ from account import views
 
 urlpatterns = patterns(
     '',
-    url(r'^$', views.index, name='index'),
+    url(r'^$', views.login, name='login'),
     url(r'^index/$', views.index, name='index'),
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^my_files/$', views.my_files, name='my_files'),
-    url(r'^my_files/change_name/$', views.change_name, name='change_name'),
-    url(r'^my_files/remove_resource/$', views.remove_resource, name='remove_resource'),
+    url(r'^change_name/$', views.change_name, name='change_name'),
+    url(r'^remove_resource/$', views.remove_resource, name='remove_resource'),
+    url(r'^player/$', views.player, name='player'),
     url(r'^upload/$', views.upload, name='upload'),
     url(r'^groups/$', views.groups, name='groups'),
     url(r'^complete_users_and_groups/(?P<completion_string>\w+)/$', views.complete_users_and_groups, name='complete_usernames'),

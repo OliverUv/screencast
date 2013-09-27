@@ -269,12 +269,18 @@
 // --------------------------------------------------
 
 
-// Default 940px grid
+// Default 940px grid (costumized for perfect fit with width=640) 
 // -------------------------
+@gridColumns:             12;
+@gridColumnWidth:         70px;
+@gridGutterWidth:         25px;
+@gridRowWidth:            (@gridColumns * @gridColumnWidth) + (@gridGutterWidth * (@gridColumns - 1));
+/* DEFAULTS
 @gridColumns:             12;
 @gridColumnWidth:         60px;
 @gridGutterWidth:         20px;
 @gridRowWidth:            (@gridColumns * @gridColumnWidth) + (@gridGutterWidth * (@gridColumns - 1));
+*/
 
 // 1200px min
 @gridColumnWidth1200:     70px;

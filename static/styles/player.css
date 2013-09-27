@@ -1,6 +1,3 @@
-.padding {
-  height: 10px;
-}
 .errormsg {
   color: Red;
   font-style: italic;
@@ -52,7 +49,7 @@
   max-height: 80px;
 }
 #videolist-container {
-  width: 100%;
+  width: 40%;
 }
 .link {
   color: #0772a1;
@@ -67,7 +64,6 @@
   font-size: 16px;
 }
 .link-container {
-  margin-left: 10px;
   height: 20px;
 }
 .metatext {

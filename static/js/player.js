@@ -38,9 +38,9 @@
           $this.addClass('no_match');
         }
         if (!$this.hasClass('no_match') && root.checked_btns[btn]) {
-          return $this.parent().show();
+          return $this.show();
         } else {
-          return $this.parent().hide();
+          return $this.hide();
         }
       });
     });

@@ -10,8 +10,10 @@ from account.common import http_badrequest, http_success, ensure_post, http_json
 import json
 import models
 
+def login(request):
+    context = Context({})
+    return render(request, 'account/login.html', context)
 
-@login_required
 def index(request):
     users = User.objects.order_by('username')
     resources = Resource.objects.all()
@@ -38,7 +40,6 @@ def profile(request):
 
     return render(request, 'account/profile.html', context)
 
-
 @login_required
 def my_files(request):
     user = request.user
@@ -59,42 +60,68 @@ def my_files(request):
     return render(request, 'account/my_files.html', context)
 
 @login_required
+def player(request):
+    user = request.user
+    # Get intersection from created and owned resources
+    shared_resources = get_objects_for_user(User.objects.get(username=user.username), 'account.view_resource').exclude(key=user)
+    # Get all resources for user
+    owned_resources = get_objects_for_user(User.objects.get(username=user.username), 'account.view_resource').order_by('upload_date')
+    # Mark the resources shared by other users
+    for resource in owned_resources:
+        if resource in shared_resources:
+            resource.is_shared = True
+        else:
+            resource.is_shared = False
+
+    context = RequestContext(request, {
+        'resources': owned_resources,
+    })
+    return render(request, 'account/player.html', context)
+
+#TODO Testa change name och remove resource med resurser som har olika anvandare
+@login_required
 def change_name(request):
     res = ''
-    err = ''
     if request.method == 'POST':
-        try:
-            resource = Resource.objects.get(disp_name=request.POST['filename'])
-            resource.disp_name = request.POST['newname']
-            resource.save()
-            res = request.POST['newname']
-        except ObjectDoesNotExist:
-            #TODO: Force ajax error (will now return as sucessfull)?
-            err = 'Object does not exist'
-            res = request.POST['filename']
+        if Resource.objects.filter(disp_name=request.POST['newname']).exists():
+            return http_badrequest('Name is not unique')
+        else:
+            try:
+                resource = Resource.objects.get(disp_name=request.POST['filename'])
+                user = User.objects.get(username=request.user)
+                if user.has_perm('modify_resource', resource):
+                    resource.disp_name = request.POST['newname']
+                    resource.save()
+                    res = request.POST['newname']
+                else:
+                    return http_badrequest('Permission denied')
+            except ObjectDoesNotExist:
+                return http_badrequest('Object does not exist')
     else:
-        res = ''
-        err = 'Not a POST'
-    result = json.dumps({'response': res, 'error': err})
-    return HttpResponse(result, mimetype='text/json')
+        http_badrequest('Request is not a POST')
+
+    result = {'message': res}
+    return http_json_response(result)
 
 @login_required
 def remove_resource(request):
     res = ''
-    err = ''
     if request.method == 'POST':
         try:
-            Resource.objects.get(disp_name=request.POST['filename']).delete()
-            res = request.POST['filename']+' sucessfully deleted'
+            resource = Resource.objects.get(disp_name=request.POST['filename'])
+            user = User.objects.get(username=request.user)
+            if user.has_perm('modify_resource', resource):
+                resource.delete()
+                res = request.POST['filename']+' sucessfully deleted'
+                return http_json_response(res)
+            else:
+                return http_badrequest('Permission denied')
         except ObjectDoesNotExist:
-            #TODO: Force ajax error (will now return as sucessfull)?
-            err = 'Object does not exist'
-            res = request.POST['filename']
+            return http_badrqeuest('Object does not exist')
     else:
-        res = ''
-        err = 'Not a POST'
-    result = json.dumps({'response': res, 'error': err})
-    return HttpResponse(result, mimetype='text/json')
+        return http_badrequest('Request is not a POST')
+    result = {'message': res}
+    return http_json_response(result)
 
 @login_required
 def complete_users_and_groups(request, completion_string):

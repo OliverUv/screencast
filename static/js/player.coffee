@@ -31,9 +31,9 @@ $ ->
         $this.addClass('no_match')
 
       if not $this.hasClass('no_match') and root.checked_btns[btn]
-        $this.parent().show()
+        $this.show()
       else
-        $this.parent().hide()
+        $this.hide()
     )
   )
   str_contains = (str,word) -> return str.indexOf(word) != -1

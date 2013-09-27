@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block tab3 %}active{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}videostyle.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}styles/player.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}js/player.js"></script>
+{% endblock %}
+
+{% block main %}
+<!-- Urls for javascript -->
+<script>
+    window.change_name_URL = '{% url 'account:change_name' %}';
+    window.remove_resource_URL = '{% url 'account:remove_resource' %}';
+</script>
+<div class='row'>
+    <div class='span7'>
+        <div id="video-container">
+                <!-- Video -->
+                <video id="video-container" controls="video-controls" poster="{{ STATIC_URL }}media/default.png" width="640" height="360">
+                <p>
+                    Your browser doesn't support HTML5 video.
+                </p>
+                </video>
+            <!-- Video Controls 
+            list-style-type: none;
+            <div id="video-controls">
+                <button type="button" id="play-pause" class="play">Play</button>
+                <input type="range" id="seek-bar" value="0">
+                <button type="button" id="mute">Mute</button>
+                <input type="range" id="volume-bar" min="0" max="1" step="0.1" value="1">
+                <button type="button" id="full-screen">Full-Screen</button>
+            </div>
+            -->
+        </div>
+        <div class='commentsbar'>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur eu ultricies erat. Quisque a erat id neque dapibus consectetur. Integer et molestie dui. Nulla facilisi. Nullam mattis urna magna, posuere imperdiet tellus ullamcorper a. Proin fermentum sollicitudin velit id fringilla. Nullam pellentesque odio dolor, et vulputate nibh pellentesque ac. Nunc ac massa adipiscing, malesuada nibh in, volutpat urna. Maecenas varius purus non erat dignissim, eu commodo libero pretium. Curabitur ipsum nibh, sagittis semper mi nec, viverra euismod ipsum. Praesent nisl eros, feugiat sed placerat vitae, rutrum a quam.<p>
+        </div>
+    </div>
+    <div class='span12'>
+        <div class='sidebar'>
+            <div class='videolist-menu'>
+                <input type='text' id='searchfield' placeholder='Search..'>
+                <i class='icon-search'></i>
+                <span style='margin-right:10px;'></span>
+                <div class='btn-group'>
+                    <div id='created_btn' class='btn btn-small btn-primary' >My uploads</div>
+                    <div id='shared_btn' class='btn btn-small btn-primary' >Shared uploads</div>
+                </div>
+            </div>
+
+            <div id='videolist-container'>
+                <ul id="resourcelist" class="unstyled">
+                {% for resource in resources %}
+                    {% if resource.is_shared %}
+                        <li id='{{resource.disp_name}}'class='shared_resource'>
+                    {% else %}
+                        <li id='{{resource.disp_name}}'class='created_resource'>
+                    {% endif %}
+                        <div class='resource_storage'>{{ resource.disp_name }}</div>
+                        <div class='row-fluid'>
+                            <div class='span4'>
+                                <a href='#' class='thumbnails'>
+                                    <img src='{{ STATIC_URL }}media/scast.png' class='thumbnail'></img>
+                                </a>
+                            </div>
+                            <div class='span7'>
+                                <div class='link-container'>
+                                    <span class='videolink'>{{ resource.disp_name }}</span>
+                                    <span class="editbutton"><i class='icon-pencil'></i></span>
+                                    <span class="removebutton"><i class='icon-remove'></i></span>
+                                    <span class="errormsg"></span>
+                                </div>
+                                <div class='ownedby'>by {{ resource.key }}</div>
+                                <div class='timestamp'>Added {{ resource.creation_timestamp|timesince }} ago</div>
+                            <div>
+                        </div>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

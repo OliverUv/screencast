@@ -30,6 +30,9 @@
 .inactive a{
     color: #fff;
 }
+.login a{
+    color: #fff;
+}
 /* End navigation bar */
 
 .mainContainer{

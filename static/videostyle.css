@@ -29,6 +29,7 @@
 		color-stop(0.13, rgb(3,113,168)),
 		color-stop(1, rgb(0,136,204))
 	);
+
 }
 
 #video-container:hover #video-controls {
