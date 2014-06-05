@@ -27,6 +27,7 @@ If using django_cas version 2.0.3, you need to patch `yourvirtualenv/lib/python2
 Do this by running the script `fix_cas_views.sh path/to/view.py` (probably something like `./fix_cas_views.sh ~/.virtualenvs/screencast/lib/python2.7/site-packages/django_cas/views.py`) It will do the following:
 
  -  Add the import `from django.contrib import messages`
+ -  Remove the get_host import.
  -  Replace `user.message_set.create(message=message)` with `messages.add_message(request, messages.INFO, message)`
  -  Replace `request.user.message_set.create(message=message)` with `messages.add_message(request, messages.INFO, message)`
  -  Change all occurrences of `get_host(request)` to `request.get_host()`
