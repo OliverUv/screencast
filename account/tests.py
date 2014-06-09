@@ -8,6 +8,10 @@ from django.test.client import Client
 import models
 from account.common import http_success
 
+##########################################################
+# Run these tests by calling python manage.py test account
+##########################################################
+
 
 def object_count(object_type):
     return object_type.objects.all().count()
