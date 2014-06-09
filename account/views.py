@@ -10,9 +10,11 @@ from account.common import http_badrequest, http_success, ensure_post, http_json
 import json
 import models
 
+
 def login(request):
     context = Context({})
     return render(request, 'account/login.html', context)
+
 
 def index(request):
     users = User.objects.order_by('username')
@@ -40,6 +42,7 @@ def profile(request):
 
     return render(request, 'account/profile.html', context)
 
+
 @login_required
 def my_files(request):
     user = request.user
@@ -59,6 +62,7 @@ def my_files(request):
     })
     return render(request, 'account/my_files.html', context)
 
+
 @login_required
 def player(request):
     user = request.user
@@ -77,6 +81,7 @@ def player(request):
         'resources': owned_resources,
     })
     return render(request, 'account/player.html', context)
+
 
 #TODO Testa change name och remove resource med resurser som har olika anvandare
 @login_required
@@ -102,6 +107,7 @@ def change_name(request):
 
     result = {'message': res}
     return http_json_response(result)
+
 
 @login_required
 def remove_resource(request):
