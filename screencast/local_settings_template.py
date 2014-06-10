@@ -4,6 +4,11 @@
 #  |  Copy this file to local_settings.py in the same directory,
 #  |  and change the settings so that they agree with your setup.
 
+# ip or url to the idacast-server host that the user should connect
+# to from their idacast-client
+IDACAST_HOST = '127.0.0.1'
+# dito for port
+IDACAST_PORT = '8888'
 
 DATABASES = {
     'default': {

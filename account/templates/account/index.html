@@ -3,10 +3,10 @@
 
 {% block main %}
 
-<form name="input" action="{% url 'account:upload' %}" method="post">
+<form name="input" action="{% url 'account:create_cast' %}" method="post">
 {% csrf_token %} 
-Choose a file: <input type="text" name="resource" placeholder="Filename.." autofocus>
-<input type="submit" value="Upload">
+New screencast: <input type="text" name="resource" placeholder="Screencast title..." autofocus>
+<input type="submit" value="Create">
 </form>
 
 <p> -------------------------- </p>

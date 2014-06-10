@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 from django.template import Context, RequestContext
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -7,8 +8,10 @@ from django.contrib.auth.decorators import login_required
 from models import Resource
 from guardian.shortcuts import get_objects_for_user, assign
 from account.common import http_badrequest, http_success, ensure_post, http_json_response
+from hashlib import sha224
 import json
 import models
+import datetime
 
 
 def login(request):
@@ -118,7 +121,7 @@ def remove_resource(request):
             user = User.objects.get(username=request.user)
             if user.has_perm('modify_resource', resource):
                 resource.delete()
-                res = request.POST['filename']+' sucessfully deleted'
+                res = request.POST['filename'] + ' sucessfully deleted'
                 return http_json_response(res)
             else:
                 return http_badrequest('Permission denied')
@@ -128,6 +131,7 @@ def remove_resource(request):
         return http_badrequest('Request is not a POST')
     result = {'message': res}
     return http_json_response(result)
+
 
 @login_required
 def complete_users_and_groups(request, completion_string):
@@ -171,8 +175,15 @@ def groups(request):
 
 
 @login_required
-def upload(request):
-    resource, c = Resource.objects.get_or_create(key=request.user, filename=request.POST['resource'], disp_name=request.POST['resource'])
+def create_cast(request):
+    display_name = request.POST['resource']
+    cast_uuid = sha224(request.user.username + display_name + str(datetime.datetime.now().time())).hexdigest()
+
+    resource, c = Resource.objects.get_or_create(
+        key=request.user,
+        cast_uuid=cast_uuid,
+        filename=display_name,
+        disp_name=display_name)
     assign('modify_resource', request.user, resource)
     assign('view_resource', request.user, resource)
 
@@ -184,12 +195,19 @@ def upload(request):
         'resource_list': resources,
         'uploaded': resource,
         'created': c,
+        'connect_settings': {
+            'host': settings.IDACAST_HOST,
+            'port': settings.IDACAST_PORT,
+            'user_id': request.user.username,
+            'cast_uuid': cast_uuid,
+            'upload_token': request.user.profile.upload_token
+        }
     })
 
+    # TODO update part of the current page instad of loading new page
     return render(request, 'account/upload.html', context)
 
-    result = json.dumps({"users": users, "message": message})
-    return HttpResponse(result, mimetype='text/json')
+
 @ensure_post
 @login_required
 def create_group(request):

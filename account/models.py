@@ -1,16 +1,31 @@
+import os
+import datetime
+
 from django.db import models
 from django.contrib.auth.models import User, Group
+from hashlib import sha224
 
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
+    upload_token = models.CharField(max_length=100)
 
 
 def get_or_create_profile(user):
     profile, c = UserProfile.objects.get_or_create(user=user)
     if not c:
         return profile
-    profile = UserProfile(user=user)
+    # profile = UserProfile(user=user)
+    try:
+        rand_seed = os.urandom(40)
+    except NotImplementedError:
+        # This string is not cryptographically safe
+        rand_seed = user.username + str(datetime.datetime.now().time())
+        print
+        '''Warning: using unsafe upload tokens for uploads.
+        Recommend running on an os with true random support.'''
+
+    profile.upload_token = sha224(rand_seed).hexdigest()
     profile.save()
     return profile
 
@@ -31,6 +46,7 @@ if not hasattr(Group, 'observers'):
 class Resource(models.Model):
     # Screencast files, audio tracks, etc.
     key = models.ForeignKey(User)
+    cast_uuid = models.CharField(max_length=200)
     filename = models.CharField(max_length=200)
     disp_name = models.CharField(max_length=200)
     upload_date = models.CharField(max_length=10)

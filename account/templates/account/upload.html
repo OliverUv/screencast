@@ -2,16 +2,24 @@
 {% block tab1 %}active{% endblock %}
 
 {% block main %}
-<form name="input" action="{% url 'account:upload' %}" method="post">
+<form name="input" action="{% url 'account:create_cast' %}" method="post">
 {% csrf_token %} 
 Choose a file: <input type="text" name="resource" placeholder="Filename.." autofocus>
 <input type="submit" value="Upload">
 </form>
 {% if created %}
-    <p>Successfully uploaded <i>{{ uploaded.filename }}</i></p>
+    <p>Successfully created <i>{{ uploaded.disp_name }}</i>. You can now run the idacast client with the following
+    parameters:</p>
 {% else %}
-    <p><i>{{ uploaded.filename }}</i> already exists in the database</p>
+    <p><i>{{ uploaded.disp_name }}</i> already exists in the database. To overwrite its contest, run your idacast client with the following parameters:</p>
 {% endif %}
+    <ul>
+        <li>Host: {{ connect_settings.host }}</li>
+        <li>Port: {{ connect_settings.port }}</li>
+        <li>User id: {{ connect_settings.user_id }}</li>
+        <li>Cast id: {{ connect_settings.cast_uuid }}</li>
+        <li>Upload token: {{ connect_settings.upload_token }}</li>
+    </ul>
 <p> -------------------------- </p>
 {% for user in users %}
     <p>Groups for {{ user.username }}: </p>
