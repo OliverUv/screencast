@@ -8,7 +8,7 @@ import django.utils
 import pytz
 import json
 
-LOCAL = timezone('Europe/Stockholm')
+LOCAL = timezone('Europe/Stockholm')  # TODO set this in local_settings.py
 UTC = pytz.utc
 
 

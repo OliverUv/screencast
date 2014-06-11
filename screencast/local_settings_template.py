@@ -7,7 +7,7 @@
 # ip or url to the idacast-server host that the user should connect
 # to from their idacast-client
 IDACAST_HOST = '127.0.0.1'
-# dito for port
+# do the same for port
 IDACAST_PORT = '8888'
 
 DATABASES = {
