@@ -21,6 +21,7 @@ def get_or_create_profile(user):
     except NotImplementedError:
         # This string is not cryptographically safe
         rand_seed = user.username + str(datetime.datetime.now().time())
+        rand_seed += ''.join(os.uname()) + str(os.getpid())
         print
         '''Warning: using unsafe upload tokens for uploads.
         Recommend running on an os with true random support.'''
