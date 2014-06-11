@@ -5,6 +5,9 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from hashlib import sha224
 
+# Note that the django admin will display all times as if you are in
+# central America.
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -15,7 +18,6 @@ def get_or_create_profile(user):
     profile, c = UserProfile.objects.get_or_create(user=user)
     if not c:
         return profile
-    # profile = UserProfile(user=user)
     try:
         rand_seed = os.urandom(40)
     except NotImplementedError:
@@ -47,10 +49,10 @@ if not hasattr(Group, 'observers'):
 class Resource(models.Model):
     # Screencast files, audio tracks, etc.
     key = models.ForeignKey(User)
-    cast_uuid = models.CharField(max_length=200)
+    cast_uuid = models.CharField(max_length=200, unique=True)
     filename = models.CharField(max_length=200)
     disp_name = models.CharField(max_length=200)
-    upload_date = models.CharField(max_length=10)
+    upload_date = models.DateTimeField(null=True)
     creation_timestamp = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
